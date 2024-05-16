@@ -1,0 +1,524 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Abrigos RS",
+    "description": "Documentação para a API do projeto Abrigos RS",
+    "version": "1.0.0"
+
+  },
+  "paths": {
+    "/SignIn": {
+      "post": {
+        "summary": "Autenticação do usuário",
+        "description": "Essa rota é responsável por da acesso a aplicação",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "Sessions": {
+                  "value": {
+                    "email": "email@email",
+                    "password": "XXXXXXX"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          },
+          "400": {
+            "description": "Incorrect email/password combination"
+          },
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "uuid": {
+                          "type": "string",
+                          "example": "TOKEN HERE"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "email@email"
+                        },
+                        "token": {
+                            "type": "object",
+                            "properties": {
+                              "refreshToken": {
+                                "type": "string",
+                                "example": "TOKEN HERE"
+                              },
+                              "accessToken": {
+                                "type": "string",
+                                "example": "TOKEN HERE"
+                              },
+                              "expirationTime": {
+                                "type": "integer",
+                                "format": "int64",
+                                "example": NUMBBER_HERE
+                              }
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SignOut": {
+      "post": {
+        "summary": "Usuário deslogado com sucesso",
+        "description": "Essa rota é responsável por deslogar o usuário",
+        "tags": ["Auth"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          }
+        }
+      }
+    },
+    "/abrigo": {
+      "post": {
+        "summary": "Criar um novo abrigo",
+        "description": "Essa rota é responsável por criar um novo abrigo",
+        "tags": ["Abrigos"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "Abrigo": {
+                  "value": {
+                    "telefone": "(51) 98134-7851",
+                    "tipo": "Abrigo",
+                    "estrutura_pessoas": null,
+                    "pmpa": "Porto Alegre",
+                    "city": "Porto Alegre",
+                    "marmita": "120/DIA",
+                    "cep": "91.040-610",
+                    "colchoes": 90,
+                    "banheiros": 12,
+                    "insumos_refeicao": false,
+                    "cozinha": false,
+                    "vagas": 100,
+                    "vagas_ocupadas": 60,
+                    "observations": "3 chuveiros, falta de gás, precisam de frutas e saladas",
+                    "address": "Rua Ouro Preto, 785, Jardim Floresta, Porto Alegre, CEP: 91040-610",
+                    "nome": "Igreja Batista Nacional de Porto Alegre Nexus",
+                    "nome_contato": "Alexandre Paz",
+                    "latitude": -29.9994723,
+                    "longitude": -51.1547427,
+                    "itensUteis": [
+                        {
+                            "item": "colchões",
+                            "quantidade": "50"
+                        },
+                        {
+                            "item": "agua",
+                            "quantidade": 1
+                        },
+                        {
+                            "item": "comida pronta",
+                            "quantidade": 120
+                        }
+                    ],
+                    "abrigopm": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Abrigo criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abrigos": {
+      "get": {
+        "summary": "Listar todos os abrigos",
+        "description": "Essa rota é responsável por buscar todos os abrigos",
+        "tags": ["Abrigos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "nome",
+            "required": false,
+            "description": "Buscar pelo nome do abrigo",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "address",
+            "required": false,
+            "description": "Buscar pelo endereço do abrigo",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          },
+          "200": {
+            "description": "Abrigos encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "telefone": {
+                      "type": "string"
+                    },
+                    "tipo": {
+                      "type": "string"
+                    },
+                    "estrutura_pessoas": {
+                      "type": "string"
+                    },
+                    "pmpa": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "marmita": {
+                      "type": "string"
+                    },
+                    "cep": {
+                      "type": "string"
+                    },
+                    "colchoes": {
+                      "type": "number"
+                    },
+                    "banheiros": {
+                      "type": "number"
+                    },
+                    "insumos_refeicao": {
+                      "type": "boolean"
+                    },
+                    "cozinha": {
+                      "type": "boolean"
+                    },
+                    "vagas": {
+                      "type": "number"
+                    },
+                    "vagas_ocupadas": {
+                      "type": "number"
+                    },
+                    "observations": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "nome_contato": {
+                      "type": "string"
+                    },
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    },
+                    "itensUteis": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "item": {
+                            "type": "string"
+                          },
+                          "quantidade": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "abrigopm": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abrigo/{id}": {
+      "get": {
+        "summary": "Consultar os dados do abrigo pelo id",
+        "description": "Essa rota é responsável por consultar os dados do abrigo pelo id",
+        "tags": ["Abrigos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": false,
+            "description": "Consulta pelo id do abrigo",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          },
+          "404": {
+            "description": "Abrigo nao encontrado"
+          },
+          "200": {
+            "description": "Abrigo encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "telefone": {
+                      "type": "string"
+                    },
+                    "tipo": {
+                      "type": "string"
+                    },
+                    "estrutura_pessoas": {
+                      "type": "string"
+                    },
+                    "pmpa": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "marmita": {
+                      "type": "string"
+                    },
+                    "cep": {
+                      "type": "string"
+                    },
+                    "colchoes": {
+                      "type": "number"
+                    },
+                    "banheiros": {
+                      "type": "number"
+                    },
+                    "insumos_refeicao": {
+                      "type": "boolean"
+                    },
+                    "cozinha": {
+                      "type": "boolean"
+                    },
+                    "vagas": {
+                      "type": "number"
+                    },
+                    "vagas_ocupadas": {
+                      "type": "number"
+                    },
+                    "observations": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "nome_contato": {
+                      "type": "string"
+                    },
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    },
+                    "itensUteis": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "item": {
+                            "type": "string"
+                          },
+                          "quantidade": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "abrigopm": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar abrigo",
+        "description": "Essa rota é responsável por atualizar o abrigo",
+        "tags": ["Abrigos"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "Abrigo": {
+                  "value": {
+                    "telefone": "(51) 98134-7851",
+                    "tipo": "Abrigo",
+                    "estrutura_pessoas": null,
+                    "pmpa": "Porto Alegre",
+                    "city": "Porto Alegre",
+                    "marmita": "120/DIA",
+                    "cep": "91.040-610",
+                    "colchoes": 90,
+                    "banheiros": 12,
+                    "insumos_refeicao": false,
+                    "cozinha": false,
+                    "vagas": 100,
+                    "vagas_ocupadas": 60,
+                    "observations": "3 chuveiros, falta de gás, precisam de frutas e saladas",
+                    "address": "Rua Ouro Preto, 785, Jardim Floresta, Porto Alegre, CEP: 91040-610",
+                    "nome": "Igreja Batista Nacional de Porto Alegre Nexus",
+                    "nome_contato": "Alexandre Paz",
+                    "latitude": -29.9994723,
+                    "longitude": -51.1547427,
+                    "itensUteis": [
+                        {
+                            "item": "colchões",
+                            "quantidade": "50"
+                        },
+                        {
+                            "item": "agua",
+                            "quantidade": 1
+                        },
+                        {
+                            "item": "comida pronta",
+                            "quantidade": 120
+                        }
+                    ],
+                    "abrigopm": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": false,
+            "description": "Atualizar o abrigo pelo id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          },
+          "200": {
+            "description": "Abrigo atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar o abrigo",
+        "description": "Essa rota é responsável por deletar o abrigo",
+        "tags": ["Abrigos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": false,
+            "description": "Deletar pelo id do abrigo",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized, JWT Token is missing"
+          },
+          "400": {
+            "description": "Product not found"
+          },
+          "200": {
+            "description": "Abrigo criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
