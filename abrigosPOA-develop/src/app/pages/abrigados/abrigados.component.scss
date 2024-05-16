@@ -1,0 +1,50 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+
+  .dashboard-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+
+    .summary-item {
+      width: 200px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .summary-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .summary-value {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-height: 600px;
+
+  .br-table {
+    th {
+      cursor: default;
+      position: sticky;
+      top: 0;
+      background-color: #f2f2f2;
+      z-index: 1;
+    }
+  }
+}

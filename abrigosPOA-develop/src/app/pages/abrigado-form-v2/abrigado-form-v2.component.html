@@ -1,0 +1,289 @@
+<br-message [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <h3>Cadastro de pessoa abrigada - PORTO ALEGRE</h3>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col">
+      <br-select
+        #ddlAbrigos
+        label="Abrigo"
+        placeholder="Selecione o Abrigo"
+        [options]="abrigosMapped"
+        (change)="onAbrigoChange($event)"
+      ></br-select>
+    </div>
+    <div class="col" style="display: flex; align-items: center" *ngIf="abrigoEncontrado">
+      <!-- <div class="alocate-check">
+        <br-switch
+          label="Alocado?"
+          name="alocado"
+          (onChange)="onAlocadoChange($event)"
+          *ngIf="abrigado?.alocado || abrigado.alocado == null"
+          checked
+        ></br-switch>
+        <br-switch
+          label="Alocado?"
+          name="alocado"
+          (onChange)="onAlocadoChange($event)"
+          *ngIf="!abrigado?.alocado && abrigado.alocado != null"
+        ></br-switch>
+      </div> -->
+      <h4>Situação: {{ abrigado.status }}</h4>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col">
+      <br-divider size class="my-3"></br-divider>
+    </div>
+  </div>
+
+  <br-message *ngIf="abrigoNaoEncontrado" state="info" title> Entre em contato com (51) 3289-8606.</br-message>
+
+  <ng-container *ngIf="abrigoEncontrado">
+    <div class="row mb-3">
+      <div class="col d-flex justify-content-center align-items-center">
+        <br-switch label="Sem documento" (onChange)="onSemDocumentoChange($event)"></br-switch>
+      </div>
+      <div class="col">
+        <br-input
+          label="CPF"
+          [attr.disabled]="form.get('semDocumento')?.value === true ? true : null"
+          placeholder="###.###.###-##"
+          mask="###.###.###-##"
+          formControlName="cpf"
+          (change)="buscarCpf($event)"
+        ></br-input>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <br-input
+          type="date"
+          label="Data de Nascimento"
+          formControlName="dataNascimento"
+          [state]="getStateFromField('dataNascimento')"
+        ></br-input>
+      </div>
+      <div class="col">
+        <br-select
+          label="Documento Complementar"
+          placeholder="Selecione"
+          [options]="tipoDocumentos"
+          (change)="onTipoDocumentoChange($event)"
+        ></br-select>
+      </div>
+      <div class="col">
+        <ng-container *ngIf="tipoDocumentoSelecionado === tipoDocEnum.RG || abrigado?.tipoDocumento == tipoDocEnum.RG">
+          <br-input label="RG" placeholder="Digite o número do RG" formControlName="rg"></br-input>
+        </ng-container>
+
+        <ng-container
+          *ngIf="tipoDocumentoSelecionado === tipoDocEnum.CNH || abrigado?.tipoDocumento == tipoDocEnum.CNH"
+        >
+          <br-input label="CNH" placeholder="Informe o número da CNH" formControlName="cnh"></br-input>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <br-input formControlName="nome" label="Nome Completo" [state]="getStateFromField('nome')"></br-input>
+      </div>
+      <div class="col">
+        <br-input formControlName="nomeSocial" label="Nome Social" [state]="getStateFromField('nomeSocial')"></br-input>
+      </div>
+      <div class="col">
+        <br-input formControlName="nomeMae" label="Nome da mãe" [state]="getStateFromField('nomeMae')"></br-input>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <br-select
+          ngDefaultControl
+          label="Gênero"
+          placeholder="Selecione"
+          [options]="tipoGenero"
+          (change)="onTipoGeneroChange($event)"
+          formControlName="genero"
+          [value]="tipoGeneroSelecionado"
+        ></br-select>
+      </div>
+      <div class="col">
+        <br-input label="NIS / Cadastro Único" formControlName="codCadUnico"></br-input>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <br-input
+          placeholder="CEP"
+          label="CEP:"
+          formControlName="cep"
+          autocomplete="off"
+          mask="##.###-###"
+          (blur)="buscarEnderecoPorCep(form.get('cep').value)"
+          [state]="getStateFromField('cep')"
+        ></br-input>
+      </div>
+      <div class="col">
+        <br-input label="Cidade" placeholder="Cidade" formControlName="cidade" [state]="getStateFromField('cidade')">
+        </br-input>
+      </div>
+      <div class="col">
+        <br-input label="Bairro" placeholder="Bairro" formControlName="bairro" [state]="getStateFromField('bairro')">
+        </br-input>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <br-input
+          placeholder="Endereço"
+          label="Endereço"
+          formControlName="endereco"
+          autocomplete="off"
+          [state]="getStateFromField('endereco')"
+        ></br-input>
+      </div>
+
+      <div class="col">
+        <br-input
+          placeholder="(##) #####-####"
+          label="Telefone"
+          formControlName="telefone"
+          mask="(##) #####-####"
+          [state]="getStateFromField('telefone')"
+        ></br-input>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <br-input
+          type="date"
+          label="Data da Entrada"
+          formControlName="dataEntrada"
+          [state]="getStateFromField('dataEntrada')"
+        ></br-input>
+      </div>
+      <div class="col">
+        <br-input
+          type="time"
+          label="Hora da Entrada"
+          formControlName="horaEntrada"
+          [state]="getStateFromField('horaEntrada')"
+        ></br-input>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <br-divider size class="my-3"></br-divider>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <br-switch
+          label="Pessoa encontra-se sozinha?"
+          (onChange)="onPessoaSozinhaChange($event)"
+          *ngIf="abrigado.pessoaSozinha"
+          checked
+        ></br-switch>
+        <br-switch
+          label="Pessoa encontra-se sozinha?"
+          (onChange)="onPessoaSozinhaChange($event)"
+          *ngIf="!abrigado.pessoaSozinha"
+        ></br-switch>
+      </div>
+    </div>
+
+    <ng-container *ngIf="pessoaSozinha || abrigado?.pessoaSozinha == true">
+      <div class="row mb-3">
+        <div class="col">
+          <h6>Contato Emergencial</h6>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <br-input
+            formControlName="contatoEmergenciaNome"
+            label="Nome"
+            placeholder="Informe o nome do seu contato emergencial"
+          ></br-input>
+        </div>
+        <div class="col">
+          <br-input
+            formControlName="contatoEmergenciaTelefone"
+            label="Telefone"
+            mask="(##) #####-####"
+            placeholder="Informe o telefone do seu contato emergencial"
+          ></br-input>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!pessoaSozinha || abrigado?.pessoaSozinha == false">
+      <ng-container *ngFor="let acompanhante of listaAcompanhantes; let i = index">
+        <div class="row mb-3">
+          <div class="col-7">
+            <br-input
+              label="Nome"
+              [value]="acompanhante.nome"
+              (change)="atualizarAcompanhante(acompanhante, 'nome', $event)"
+              placeholder="Informe o nome do seu contato emergencial"
+            ></br-input>
+          </div>
+          <div class="col-2">
+            <br-input
+              type="date"
+              [value]="acompanhante.dataNascimento"
+              (change)="atualizarAcompanhante(acompanhante, 'dataNascimento', $event)"
+              label="Data de Nascimento"
+            ></br-input>
+          </div>
+          <div class="col-2">
+            <br-select
+              label="Parentesco"
+              placeholder="Selecione"
+              [options]="abrigado.abrigoId ? tipoParentescoEdit[i] : tipoParentescos"
+              [value]="acompanhante.grauParentesco"
+              (change)="atualizarAcompanhante(acompanhante, 'grauParentesco', $event)"
+            ></br-select>
+          </div>
+          <div class="col-1">
+            <div class="mt-3 d-flex justify-content-md-end" *ngIf="i > 0">
+              <br-button circle icon="trash" type="Tertiary" (click)="removerAcompanhante(acompanhante)"></br-button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="row mb-3">
+        <div class="col">
+          <div class="mt-3 d-flex justify-content-md-end">
+            <br-button icon="user" label="Adicionar parente" type="secondary" (click)="adicionarParente()"></br-button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="row">
+      <div class="col">
+        <div class="mt-3 d-flex justify-content-md-end">
+          <br-button
+            id="enviar"
+            label="Enviar Formulário"
+            type="primary"
+            class="mt-3 mr-1"
+            (click)="onSubmit()"
+            [attr.aria-labelledby]="'Salvar'"
+          ></br-button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</form>

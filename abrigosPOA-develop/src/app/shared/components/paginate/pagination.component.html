@@ -1,0 +1,84 @@
+<hr />
+<nav
+  class="br-pagination"
+  aria-label="paginação"
+  [attr.data-total]="totalItems"
+  [attr.data-current]="currentPage"
+  [attr.data-per-page]="itemsPerPage"
+>
+  <div class="pagination-per-page" *ngIf="!hideItemsPerPage">
+    <div class="br-select">
+      <div class="br-input">
+        <label for="per-page-selection">Exibir</label>
+        <input id="per-page-selection" type="text" placeholder=" " [value]="itemsPerPage" />
+        <button
+          class="br-button"
+          type="button"
+          aria-label="Exibir lista"
+          tabindex="-1"
+          data-trigger="data-trigger"
+          (click)="showListItems()"
+        >
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="br-list" tabindex="0" *ngIf="showList" style="display: block">
+        <div class="br-item" *ngFor="let items of [100, 250, 500]; let i = index">
+          <div class="br-radio">
+            <input
+              id="per-page-{{ items }}"
+              type="radio"
+              name="per-page"
+              [value]="items"
+              (change)="updateItemsPerPage(items)"
+            />
+            <label for="per-page-{{ items }}">{{ items }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="br-divider d-none d-sm-block mx-3" *ngIf="!hideItemsPerPage"></span>
+  <div class="pagination-information d-sm-flex">
+    <span class="current">{{ pageStart }}</span
+    ><span *ngIf="pageEnd > 1"
+      >&ndash;<span class="per-page">{{ pageEnd }}</span></span
+    >&nbsp;de&nbsp;<span class="total">{{ totalItems }}</span
+    >&nbsp;{{ label }}
+  </div>
+  <div class="pagination-go-to-page d-sm-flex ml-auto">
+    <div class="br-select">
+      <div class="br-input">
+        <label for="go-to-selection-random-2739">Página</label>
+        <input id="go-to-selection-random-2739" type="text" placeholder=" " value="{{ currentPage }}" />
+        <button
+          class="br-button"
+          type="button"
+          aria-label="Exibir lista"
+          tabindex="-1"
+          data-trigger="data-trigger"
+          (click)="showPagesItems()"
+        >
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="br-list" tabindex="0" *ngIf="showPages" style="display: block; max-height: 150px">
+        <div *ngFor="let page of getTotalPagesArray(); let j = index" class="br-item" tabindex="-1">
+          <div class="br-radio">
+            <input id="go-to-{{ page }}" type="radio" name="go-to" [value]="page" (change)="changePage(page)" />
+            <label for="go-to-{{ page }}">{{ page }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="br-divider d-none d-sm-block mx-3"></span>
+  <div class="pagination-arrows ml-auto ml-sm-0">
+    <button class="br-button circle" type="button" aria-label="Voltar página" (click)="previousPage()">
+      <i class="fas fa-angle-left" aria-hidden="true"></i>
+    </button>
+    <button class="br-button circle" type="button" aria-label="Página seguinte" (click)="nextPage()">
+      <i class="fas fa-angle-right" aria-hidden="true"></i>
+    </button>
+  </div>
+</nav>

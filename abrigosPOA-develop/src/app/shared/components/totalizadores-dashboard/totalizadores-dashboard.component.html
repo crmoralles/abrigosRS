@@ -1,0 +1,28 @@
+<div class="dashboard-container">
+  <div class="dashboard-summary">
+    <div class="summary-item">
+      <div class="summary-label">Total de Abrigos:</div>
+      <div class="summary-value">{{ listaFiltrada.length }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total de Vagas:</div>
+      <div class="summary-value">{{ calcularTotalVagas(listaFiltrada) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total de Vagas Ocupadas:</div>
+      <div class="summary-value">{{ calcularTotalVagasOcupadas(listaFiltrada) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total de Vagas Disponíveis:</div>
+      <div class="summary-value">{{ calcularVagasDisponiveis(listaFiltrada) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total de Famílias Cadastradas:</div>
+      <div class="summary-value">{{ calcularTotalFamiliasRegistrados(listaFiltrada) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Total de Abrigados:</div>
+      <div class="summary-value">{{ calcularTotalAbrigadosRegistrados() }}</div>
+    </div>
+  </div>
+</div>

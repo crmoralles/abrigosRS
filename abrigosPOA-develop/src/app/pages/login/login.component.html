@@ -1,0 +1,87 @@
+<div class="container login">
+  <br-message class="col-12" [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+  <div class="row">
+    <div class="col-md-12 mb-5">
+      <picture>
+        <img
+          src="assets/imgs/logo.png"
+          class="login--img"
+          alt="Imagem com uma casa e o símbolo de check com o texto Abrigos RS"
+        />
+      </picture>
+    </div>
+  </div>
+
+  <form *ngIf="formType === 'login'" [formGroup]="form" (ngSubmit)="onSubmit()" class="login--form">
+    <div class="mb-3">
+      <div class="row">
+        <div class="col">
+          <br-input type="text" placeholder="E-mail" label="E-mail" formControlName="email"></br-input>
+        </div>
+        <div class="col">
+          <br-input type="password" placeholder="Senha" label="Senha" formControlName="password"></br-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-md-end button-box-form">
+      <br-button
+        id="enviar"
+        label="Entrar"
+        type="primary"
+        class="mt-3 mr-1 block"
+        [submit]="true"
+        (click)="onSubmit()"
+        [attr.aria-labelledby]="'Entrar'"
+      >
+      </br-button>
+    </div>
+
+    <div class="d-flex justify-content-md-end button-box-form" (click)="changeFormType()">
+      <br-button icon label="Tertiary">Esqueci minha senha / Primeiro acesso</br-button>
+    </div>
+
+    <div class="col mt-5">
+      <br-message state="info" closable>
+        <p>
+          Em decorrência das enchentes que afetaram o estado do Rio Grande do Sul, estamos gerenciando as necessidades
+          de abrigos e vitimas do desastre.
+        </p>
+        <p>
+          <a target="_blank" href="https://abrigospoa.agidesk.com/br/formulario/2?app_token=66379c93b658c_FR2&embed"
+            >Clique aqui</a
+          >
+          para entrar em contato conosco e cadastrar o seu abrigo ou a sua prefeitura.
+        </p>
+      </br-message>
+    </div>
+  </form>
+
+  <form *ngIf="formType === 'recovery'" [formGroup]="formRecovery" class="login--form">
+    <div class="mb-3">
+      <div class="row">
+        <div class="col">
+          <br-input type="text" placeholder="E-mail" label="E-mail" formControlName="email"></br-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-md-end button-box-form">
+      <br-button
+        id="enviar"
+        label="Enviar"
+        type="primary"
+        class="mt-3 mr-1 block"
+        [submit]="true"
+        (click)="onRecovery()"
+        [attr.aria-labelledby]="'Enviar'"
+      >
+      </br-button>
+    </div>
+
+    <div class="d-flex justify-content-md-end button-box-form" (click)="changeFormType()">
+      <br-button icon label="Tertiary">Voltar</br-button>
+    </div>
+  </form>
+</div>

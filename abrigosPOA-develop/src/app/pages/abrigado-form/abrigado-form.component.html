@@ -1,0 +1,384 @@
+<br-message [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <h3>Abrigo {{ infosAbrigo?.join(" | ") }}</h3>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <br-input
+          type="text"
+          id="nome"
+          name="nome"
+          placeholder="Nome"
+          label="Nome do abrigado"
+          formControlName="nome"
+          autocomplete="off"
+          [state]="getStateFromField('nome')"
+          value="{{ abrigado?.nome }}"
+        ></br-input>
+        <div *ngIf="form.get('nome').invalid && form.get('nome').touched">
+          <div *ngIf="form.get('nome').errors.required">
+            <app-message [control]="form.get('nome')" error="required" message="O campo é obrigatório"></app-message>
+          </div>
+          <div *ngIf="form.get('nome').errors.minLength">
+            <app-message
+              [control]="form.get('nome')"
+              error="minLength"
+              message="Deve conter pelo menos 3 caracteres"
+            ></app-message>
+          </div>
+          <div *ngIf="form.get('nome').errors.maxLength">
+            <app-message
+              [control]="form.get('nome')"
+              error="maxLength"
+              message="Deve conter no máximo 255 caracteres"
+            ></app-message>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <br-input
+          type="date"
+          id="dataNascimento"
+          name="dataNascimento"
+          placeholder="Data de Nascimento"
+          label="Data de Nascimento"
+          formControlName="dataNascimento"
+          value="{{ abrigado?.dataNascimento }}"
+        ></br-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <br-input
+          type="text"
+          id="cep"
+          name="cep"
+          placeholder="CEP"
+          label="CEP:"
+          formControlName="cep"
+          autocomplete="off"
+          mask="##.###-###"
+          (blur)="buscarEnderecoPorCep(form.get('cep').value)"
+          value="{{ abrigado?.cep }}"
+        ></br-input>
+      </div>
+
+      <div class="col">
+        <br-input
+          id="cidade"
+          name="cidade"
+          label="Cidade"
+          placeholder="Cidade"
+          formControlName="cidade"
+          value="{{ abrigado.cidade }}"
+        >
+        </br-input>
+      </div>
+
+      <div class="col">
+        <br-input
+          type="text"
+          id="endereco"
+          name="endereco"
+          placeholder="Endereço"
+          label="Endereço"
+          formControlName="endereco"
+          autocomplete="off"
+          value="{{ abrigado?.endereco }}"
+        ></br-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="temDocumento"
+            name="temDocumento"
+            formControlName="temDocumento"
+            type="checkbox"
+            aria-label="Tem Documento?"
+            value="{{ abrigado?.temDocumento }}"
+          />
+          <label for="temDocumento">Tem Documento?</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="grupoFamiliar"
+            name="grupoFamiliar"
+            formControlName="grupoFamiliar"
+            type="checkbox"
+            aria-label="Grupo Familiar?"
+            value="{{ abrigado?.grupoFamiliar }}"
+          />
+          <label for="grupoFamiliar">Está em grupo Familiar?</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="row justify-content-between align-items-center">
+          <div class="col">
+            <br-input
+              type="text"
+              id="cpf"
+              name="cpf"
+              placeholder="CPF"
+              label="CPF:"
+              formControlName="cpf"
+              autocomplete="off"
+              mask="###.###.###-##"
+              unmask="true"
+              (blur)="checkCPF()"
+              [state]="(cpfError | async) ? 'danger' : ''"
+              value="{{ abrigado?.cpf }}"
+            ></br-input>
+            <br-message *ngIf="cpfError | async" state="danger" show-icon="" feedback>CPF Já Registrado.</br-message>
+          </div>
+          <div class="search-cpf">
+            <i *ngIf="searchCPF | async" class="fas fa-spinner"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <br-input
+          type="text"
+          id="rg"
+          name="rg"
+          placeholder="RG"
+          label="RG:"
+          formControlName="rg"
+          autocomplete="off"
+          value="{{ abrigado?.rg }}"
+        ></br-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="acompanhadoMenor"
+            name="acompanhadoMenor"
+            formControlName="acompanhadoMenor"
+            type="checkbox"
+            aria-label="Acompanhado de menor?"
+            checked="{{ abrigado?.acompanhadoMenor }}"
+          />
+          <label for="acompanhadoMenor">Acompanhado de menor de 18 anos?</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    Formulário Menores de idade
+  -->
+  <div class="mb-3" *ngIf="form.get('acompanhadoMenor')?.value || abrigado?.acompanhadoMenor">
+    <div class="mb-3" formArrayName="menor">
+      <br-collapse
+        *ngFor="let menor of menores?.controls; index as i"
+        [formGroupName]="i"
+        name-icon-collapsed="chevron-up"
+        name-icon-not-collapsed="chevron-down"
+        [title]="getMinorsName(i)"
+        show-icon="true"
+      >
+        <div class="mb-3" (click)="$event.stopPropagation()">
+          <br-input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Nome"
+            label="Nome do menor"
+            formControlName="nome"
+            autocomplete="off"
+          ></br-input>
+        </div>
+
+        <div class="mb-3" (click)="$event.stopPropagation()">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="grauParentesco"
+                name="grauParentesco"
+                placeholder="Grau de Parentesco"
+                label="Grau de Parentesco"
+                formControlName="grauParentesco"
+              ></br-input>
+            </div>
+            <div class="col">
+              <br-input
+                type="date"
+                id="dataNascimento"
+                name="dataNascimento"
+                placeholder="Data de Nascimento"
+                label="Data de Nascimento do menor"
+                formControlName="dataNascimento"
+              ></br-input>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3" (click)="$event.stopPropagation()">
+          <br-button
+            label="Remover Menor"
+            type="secondary"
+            class="mt-3 mr-1"
+            icon="trash"
+            (click)="removeMenor(i)"
+            [attr.aria-labelledby]="'Remover Menor'"
+          ></br-button>
+        </div>
+      </br-collapse>
+    </div>
+    <div class="mb-3">
+      <br-button
+        id="adicionarMenor"
+        label="Adicionar Menor"
+        type="primary"
+        class="mt-3 mr-1"
+        (click)="addMenor()"
+        [attr.aria-labelledby]="'Adicionar Menor'"
+      ></br-button>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input id="temRenda" name="temRenda" formControlName="temRenda" type="checkbox" aria-label="Tem Renda?" />
+          <label for="temRenda">Tem Renda?</label>
+        </div>
+      </div>
+      <div class="col" *ngIf="form.get('temRenda')?.value">
+        <br-input
+          type="number"
+          id="renda"
+          name="renda"
+          placeholder="Renda"
+          label="Renda"
+          formControlName="renda"
+          value="{{ abrigado?.renda }}"
+        ></br-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="temHabitacao"
+            name="temHabitacao"
+            formControlName="temHabitacao"
+            type="checkbox"
+            aria-label="Tem Habitação?"
+            checked="{{ abrigado?.temHabitacao }}"
+          />
+          <label for="temHabitacao">Tem Habitação?</label>
+        </div>
+      </div>
+      <div class="col" *ngIf="form.get('temHabitacao')?.value">
+        <br-select
+          label="Situação da moradia"
+          placeholder="Selecione a situação"
+          [options]="optionsHousingSituation"
+          (change)="housingSituationChange($event)"
+          value="{{ abrigado?.situacaoMoradia }}"
+        >
+        </br-select>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <br-input
+      type="text"
+      id="necessidadesImediatas"
+      name="necessidadesImediatas"
+      placeholder="Necessidades Imediatas"
+      label="Necessidades Imediatas"
+      formControlName="necessidadesImediatas"
+      autocomplete="off"
+      value="{{ abrigado?.necessidadesImediatas }}"
+    ></br-input>
+  </div>
+
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="cadastradoCadUnico"
+            name="cadastradoCadUnico"
+            formControlName="cadastradoCadUnico"
+            type="checkbox"
+            aria-label="Cadastrado no CadÚnico?"
+            checked="{{ abrigado?.cadastradoCadUnico }}"
+          />
+          <label for="cadastradoCadUnico">Cadastrado no CadÚnico?</label>
+        </div>
+      </div>
+      <div class="col">
+        <br-input
+          type="text"
+          id="codCadUnico"
+          name="codCadUnico"
+          placeholder="Código cadastro único"
+          label="Código cadastro único:"
+          formControlName="codCadUnico"
+          autocomplete="off"
+          value="{{ abrigado?.codCadUnico }}"
+        ></br-input>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <div class="br-checkbox">
+          <input
+            id="alocado"
+            name="alocado"
+            formControlName="alocado"
+            type="checkbox"
+            aria-label="Alocado no abrigo"
+            checked="{{ abrigado?.alocado }}"
+          />
+          <label for="alocado">Alocado no abrigo?</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 d-flex justify-content-md-end">
+    <br-button
+      id="enviar"
+      label="Enviar Formulário"
+      type="primary"
+      class="mt-3 mr-1"
+      (click)="onSubmit()"
+      [attr.aria-labelledby]="'Salvar'"
+      [disabled]="!abrigo"
+    ></br-button>
+  </div>
+</form>

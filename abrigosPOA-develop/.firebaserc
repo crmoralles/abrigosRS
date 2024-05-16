@@ -1,0 +1,22 @@
+{
+  "targets": {
+    "APP_NAME-dev": {
+      "hosting": {
+        "app": [
+          "APP_NAME"
+        ]
+      }
+    },
+    "APP_NAME": {
+      "hosting": {
+        "app": [
+          "APP_NAME"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "APP_NAME-dev",
+    "prod": "APP_NAME"
+  }
+}

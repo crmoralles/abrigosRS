@@ -1,0 +1,143 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-height: 600px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.br-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f2f2f2;
+  z-index: 1;
+}
+
+.label-custom {
+  color: var(--color);
+  font-size: var(--font-size-scale-base);
+  font-weight: var(--font-weight-semi-bold);
+  line-height: var(--font-line-height-medium);
+  margin-bottom: var(--spacing-scale-half);
+}
+
+.select {
+  width: 100%;
+  background-color: var(--background-light);
+  border-color: var(--border-color-alternative);
+  border-radius: var(--surface-rounder-sm);
+  border-style: var(--border-style);
+  border-width: var(--border-width);
+  color: var(--color-light);
+  display: block;
+  font-size: var(--font-size-scale-up-01);
+  font-weight: var(--font-weight-medium);
+  height: var(--input-size);
+  margin-top: var(--spacing-scale-half);
+  padding-bottom: 11px;
+  padding-left: var(--spacing-scale-2x);
+  padding-right: var(--spacing-scale-2x);
+  padding-top: 2px;
+  /* width: 100%; */
+  background-image: linear-gradient(rgba(var(--color-rgb), var(--hover)), rgba(var(--color-rgb), var(--hover)));
+}
+
+.row-action {
+  display: flex;
+}
+
+.items-col-left {
+  display: flex;
+  justify-content: flex-end;
+  justify-items: center;
+  margin-bottom: 0;
+}
+
+.actions-button-flex {
+  display: flex;
+}
+
+/* Estilos para telas pequenas */
+@media screen and (max-width: 600px) {
+  .row-action {
+    display: block;
+  }
+
+  .items-col-left {
+    display: block;
+    justify-content: start;
+    justify-items: center;
+    margin-bottom: 20px;
+  }
+}
+
+.card-deck {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card {
+  width: 200px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* sombra */
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px;
+  margin: 0;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.card-text {
+  font-size: 16px;
+  padding: 10px;
+  margin: 0;
+}
+
+.switch-col {
+  width: 100%;
+
+  .br-switch {
+    width: 50% !important;
+
+    @media (max-width: 1600px) {
+      width: 70% !important;
+    }
+
+    @media (max-width: 1024px) {
+      width: 100% !important;
+    }
+
+    label {
+      width: 100%;
+    }
+  }
+}

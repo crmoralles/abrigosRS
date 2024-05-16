@@ -1,0 +1,246 @@
+<div class="row">
+  <div class="col">
+    <h1>Abrigados</h1>
+  </div>
+  <div class="col d-flex justify-content-end">
+    <br-button type="primary" class="mt-3 mr-1" (click)="addAbrigado()" label="Cadastrar Abrigado"> </br-button>
+    <br-button *ngIf="permission" class="primary" (click)="exportToExcel()">
+      <br-icon-base icon-name="table" family-name="fas" class-name="mr-2"></br-icon-base>
+      Exportar
+    </br-button>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col">
+    <div class="dashboard-container">
+      <div class="dashboard-summary">
+        <div class="summary-item">
+          <div class="summary-label">Total de Abrigados:</div>
+          <div class="summary-value">{{ totalAbrigados }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col">
+    <br-input type="text" placeholder="Procurar por abrigo ou nome" label="Busca:" (input)="search($event)"></br-input>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-3">
+    <br-select
+      label="Abrigo"
+      placeholder="Selecione o Abrigo"
+      [options]="abrigosMapped"
+      (change)="onAbrigoChange($event)"
+      style="z-index: 9"
+    ></br-select>
+  </div>
+
+  <div class="col-9">
+    <br-input
+      type="text"
+      placeholder="Procurar por: abrigo, abrigado, CPF"
+      label="Busca:"
+      (input)="search($event)"
+    ></br-input>
+  </div>
+</div>
+
+<div class="row mb-3" *ngIf="busca && listaFiltrada.length === 0">
+  <div class="col">
+    <br-message state="info" title>Nenhum resultado encontrado</br-message>
+  </div>
+</div>
+
+<div class="row mb-3" *ngIf="listaFiltrada.length > 0">
+  <div class="col">
+    <div class="table-wrapper">
+      <table class="br-table">
+        <thead>
+          <th>Ação</th>
+          <th class="column-collapse" scope="col" aria-hidden="true"></th>
+          <th style="width: 100px">
+            Abrigo
+            <br-icon-base icon-name="sort" family-name="fas" class-name="" (click)="shelterSortTable()"></br-icon-base>
+          </th>
+          <th>
+            Nome
+            <br-icon-base icon-name="sort" family-name="fas" class-name="" (click)="nameSortTable()"></br-icon-base>
+          </th>
+          <th>Nascimento</th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">Idade</th>
+          <th>Endereço</th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR" title="Documento">
+            Doc
+          </th>
+          <th>CPF</th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">RG</th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR" title="Grupo Familiar">
+            G. Familiar
+          </th>
+          <th
+            appAuthorization
+            [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR"
+            title="Acompanhado de Menor"
+          >
+            Ac. de Menor
+          </th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">Renda</th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">Habitação</th>
+          <th
+            appAuthorization
+            [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR"
+            title="Situação de Moradia"
+          >
+            Sit. Moradia
+          </th>
+          <th
+            appAuthorization
+            [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR"
+            title="Necessidades Imediatas"
+          >
+            Nec. Imediatas
+          </th>
+          <th
+            appAuthorization
+            [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR"
+            title="Cadastrado no CadÚnico"
+          >
+            Tem CadUnico?
+          </th>
+          <th appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR" title="Código CadÚnico">
+            CadUnico
+          </th>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let abrigado of currentPageItems; index as i; trackBy: trackAbrigados">
+            <tr>
+              <td>
+                <div class="row" style="margin: unset; min-width: 100px">
+                  <br-button
+                    class="small"
+                    [routerLink]="['/abrigado', abrigado.abrigoId, abrigado.id]"
+                    circle
+                    icon="edit"
+                    type="primary"
+                    title="Editar abrigado"
+                    style="margin-right: 5px"
+                  ></br-button>
+                  <br-button
+                    class="small"
+                    circle
+                    icon="share"
+                    type="primary"
+                    title="Registrar saída do abrigado"
+                    (click)="checkout(abrigado)"
+                  ></br-button>
+                </div>
+              </td>
+              <td>
+                <button
+                  *ngIf="abrigado?.listaMenor?.length >= 1"
+                  class="br-button circle small"
+                  type="button"
+                  id="button-line-2-98928"
+                  [attr.aria-label]="'Expandir/Retrair item ' + i"
+                  data-toggle="collapse"
+                  (click)="toggleCollapse(abrigado)"
+                >
+                  <i
+                    class="fas"
+                    [ngClass]="{ 'fa-chevron-down': !abrigado.isCollapsed, 'fa-chevron-up': abrigado.isCollapsed }"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </td>
+
+              <td>{{ formatarNomeProprio(abrigado.abrigoNome) }}</td>
+              <td>{{ formatarNomeProprio(abrigado.nome) }}</td>
+              <td>{{ interpolacaoData(abrigado.dataNascimento) }}</td>
+
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado["idade"] }}
+              </td>
+              <td>{{ abrigado.endereco }} - {{ abrigado.cidade }}</td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.temDocumento | simNao }}
+              </td>
+              <td>{{ abrigado.cpf }}</td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.rg }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.grupoFamiliar | simNao }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.acompanhadoMenor | simNao }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.renda }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.temHabitacao | simNao }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.situacaoMoradia }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.necessidadesImediatas }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.cadastradoCadUnico | simNao }}
+              </td>
+              <td appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR">
+                {{ abrigado.codCadUnico }}
+              </td>
+            </tr>
+            <tr class="collapse" *ngIf="abrigado.isCollapsed">
+              <td class="responsive" aria-hidden="true" colspan="13">
+                <ng-container *ngTemplateOutlet="menores; context: { $implicit: abrigado }"></ng-container>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      label="abrigados"
+      [itemsPerPage]="itemsPerPage"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [totalItems]="totalItems"
+      (pageChange)="handlePageChange($event)"
+      (itemsPerPageChange)="handleItemsPerPageChange($event)"
+    >
+    </app-pagination>
+  </div>
+</div>
+
+<ng-template #menores let-abrigado>
+  <table class="br-table">
+    <thead>
+      <th>Nome</th>
+      <th>Grau de Parentesco</th>
+      <th>Data de Nascimento</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let menor of abrigado.listaMenor">
+        <td>{{ menor.nome }}</td>
+        <td>{{ getParentesco(menor.grauParentesco) }}</td>
+        <td>{{ menor.dataNascimento | date: "dd/MM/YY" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
+<app-abrigado-checkout
+  [show]="showModalAbrigadosCheckout"
+  [abrigado]="selectedAbrigadoCheckout"
+  (onClose)="closeModalAbrigados($event)"
+></app-abrigado-checkout>

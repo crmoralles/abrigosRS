@@ -1,0 +1,103 @@
+<div class="main">
+  <section class="col-sm-6 col-md-4 col-lg-6">
+    <br-card>
+      <br-card-header slot="header"><h3>TERMO DE CONSENTIMENTO PARA TRATAMENTO DE DADOS - CADASTRO</h3></br-card-header>
+      <br-card-content slot="content">
+        <p>
+          Consinto, de forma livre, informada e inequívoca, com o tratamento dos meus dados para fins de cadastro no
+          aplicativo com a finalidade de auxiliar com trabalho voluntário durante as enchentes do Rio Grande do Sul no
+          ano de 2024, nos termos do art. 7º, I da Lei Geral de Proteção de Dados (LGPD).
+        </p>
+      </br-card-content>
+      <br-card-footer slot="footer">
+        <div class="footerCard">
+          <span></span>
+
+          <br-button
+            label="Aceito"
+            type="primary"
+            [disabled]="signedLGDP.signed_tratamento_dados"
+            [icon]="signedLGDP.signed_tratamento_dados ? 'check' : ''"
+            tooltip-text="Li e aceito os termos de uso"
+            (click)="signed(0)"
+          >
+          </br-button>
+        </div>
+      </br-card-footer>
+    </br-card>
+  </section>
+
+  <section
+    class="col-sm-6 col-md-4 col-lg-6"
+    appAuthorization
+    [condition]="'=='"
+    [level]="_authorization.AUTHORIZATION_LEVEL_CONTROLADOR"
+  >
+    <br-card>
+      <br-card-header slot="header"><h3>TERMO DE RESPONSABILIDADE DO USUÁRIO CONTROLADOR</h3></br-card-header>
+      <br-card-content slot="content">
+        <p>
+          Eu, cadastro “usuário controlador”, declaro para os devidos fins e efeitos, que responsabilizo-me pela
+          adequada utilização dos dados pessoais a que tiver acesso, para fins tão somente de alimentar o banco de dados
+          do aplicativo/software e auxiliar no redirecionamento das pessoas a reencontrarem suas famílias que foram
+          assoladas pelas enchentes no estado do Rio Grande do Sul no ano de 2024, estando ciente de que posso vir a ser
+          responsabilizado civil, criminal e administrativamente pelos danos morais ou materiais decorrentes da
+          utilização, reprodução ou divulgação indevida dos dados sobre os deveres, requisitos e responsabilidades
+          decorrentes da Lei n. 13.709/18, Lei Geral de Proteção de Dados Pessoais – LGPD, sobre as formas de coleta,
+          tratamento e compartilhamento de dados.
+        </p>
+      </br-card-content>
+      <br-card-footer slot="footer" class="footerCard">
+        <div class="d-flex"></div>
+        <div>
+          <br-button
+            label="Aceito"
+            type="primary"
+            [disabled]="signedLGDP.signed_usuaria_controlador"
+            [icon]="signedLGDP.signed_usuaria_controlador ? 'check' : ''"
+            tooltip-text="Li e aceito os termos de uso"
+            (click)="signed(1)"
+          ></br-button>
+        </div>
+      </br-card-footer>
+    </br-card>
+  </section>
+
+  <section
+    class="col-sm-6 col-md-4 col-lg-6"
+    appAuthorization
+    [condition]="'=='"
+    [level]="_authorization.AUTHORIZATION_LEVEL_VOLUNTARIO"
+  >
+    <br-card>
+      <br-card-header slot="header"><h3>TERMO DE RESPONSABILIDADE DO VOLUNTÁRIO</h3></br-card-header>
+      <br-card-content slot="content">
+        <p>
+          Eu, cadastro “voluntário”, declaro para os devidos fins e efeitos, que responsabilizo-me pela adequada
+          utilização dos dados pessoais a que tiver acesso, para fins tão somente de alimentar o banco de dados do
+          aplicativo/software visando auxiliar no redirecionamento das pessoas a reencontrarem suas famílias que foram
+          assoladas pelas enchentes no estado do Rio Grande do Sul no ano de 2024, estando ciente de que posso vir a ser
+          responsabilizado civil, criminal e administrativamente pelos danos morais ou materiais decorrentes da
+          utilização, reprodução ou divulgação indevida dos dados sobre os deveres, requisitos e responsabilidades
+          decorrentes da Lei n. 13.709/18, Lei Geral de Proteção de Dados Pessoais – LGPD, sobre as formas de coleta,
+          tratamento e compartilhamento de dados.
+        </p>
+      </br-card-content>
+      <br-card-footer slot="footer">
+        <div class="footerCard">
+          <div class="d-flex"></div>
+          <div>
+            <br-button
+              label="Aceito"
+              type="primary"
+              [disabled]="signedLGDP.signed_voluntario"
+              [icon]="signedLGDP.signed_voluntario ? 'check' : ''"
+              tooltip-text="Li e aceito os termos de uso"
+              (click)="signed(2)"
+            ></br-button>
+          </div>
+        </div>
+      </br-card-footer>
+    </br-card>
+  </section>
+</div>

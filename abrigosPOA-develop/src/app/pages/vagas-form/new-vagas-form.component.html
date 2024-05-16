@@ -1,0 +1,1110 @@
+<br-message [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+<div appModal center-content="" *ngIf="modalShow" style="flex: 1 1 0">
+  <div
+    *ngIf="modalShow"
+    title="{{ titleModal }}"
+    show
+    closable
+    style="
+      display: flex;
+      max-width: none;
+      width: 80vw;
+      min-height: 80%;
+      max-height: 80%;
+      background-color: white;
+      padding: 10px;
+      margin: auto;
+    "
+  >
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      style="display: flex; flex-direction: column; overflow: hidden; flex: 1 1 0"
+    >
+      <div class="d-flex justify-content-between">
+        <div>
+          <h4>{{ titleModal }} {{ nomeAbrigo }}</h4>
+        </div>
+        <div class="d-flex align-items-center pr-5">
+          <div class="br-switch" role="presentation">
+            <input checked="checked" type="checkbox" role="switch" id="ativo" formControlName="ativo" />
+            <label for="ativo">Ativo</label>
+          </div>
+        </div>
+      </div>
+      <div
+        style="display: flex; flex: 1 1 0; flex-direction: column; padding: 10px; overflow-x: hidden; overflow-y: auto"
+      >
+        <div [style]="typeEdit == 1 || typeEdit == 0 ? '' : 'display: none'">
+          <!-- nome -->
+          <div class="mb-3">
+            <div class="row">
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  placeholder="Nome"
+                  label="Nome do local:"
+                  formControlName="nome"
+                  (input)="handleInput(['nome'])"
+                ></br-input>
+                <div *ngIf="form.get('nome').invalid && form.get('nome').touched">
+                  <div *ngIf="form.get('nome').errors.required">
+                    <app-message
+                      [control]="form.get('nome')"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+              <div formGroupName="endereco" class="col">
+                <br-input
+                  type="text"
+                  id="cep"
+                  name="cep"
+                  placeholder="CEP"
+                  label="CEP:"
+                  formControlName="cep"
+                  autocomplete="off"
+                  mask="##.###-###"
+                  (blur)="buscarEnderecoPorCep(form.get(['endereco', 'cep']).value)"
+                ></br-input>
+                <div *ngIf="form.get(['endereco', 'cep']).invalid && form.get(['endereco', 'cep']).touched">
+                  <div *ngIf="form.get(['endereco', 'cep']).errors.required">
+                    <app-message
+                      [control]="form.get(['endereco', 'cep'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+                <br-message feedback state="danger" show-icon="true" *ngIf="erroCEP"
+                  >CEP inválido ou inexistente</br-message
+                >
+              </div>
+            </div>
+
+            <div class="row">
+              <div formGroupName="endereco" class="col">
+                <br-input
+                  id="city"
+                  name="city"
+                  label="Cidade"
+                  placeholder="Cidade"
+                  formControlName="cidade"
+                  (input)="handleInput(['endereco', 'cidade'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['endereco', 'cidade']).invalid && form.get(['endereco', 'cidade']).touched">
+                  <div *ngIf="form.get(['endereco', 'cidade']).errors.required">
+                    <app-message
+                      [control]="form.get(['endereco', 'cidade'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+
+              <div formGroupName="endereco" class="col">
+                <br-input
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Endereço"
+                  label="Endereço:"
+                  formControlName="rua"
+                  (input)="handleInput(['endereco', 'rua'])"
+                ></br-input>
+                <div *ngIf="form.get(['endereco', 'rua']).invalid && form.get(['endereco', 'rua']).touched">
+                  <div *ngIf="form.get(['endereco', 'rua']).errors.required">
+                    <app-message
+                      [control]="form.get(['endereco', 'rua'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="ponto_referencia"
+                  name="ponto_referencia"
+                  placeholder="Ponto de referência do local"
+                  label="Ponto de referência do local:"
+                  formControlName="ponto_referencia"
+                  (input)="handleInput(['ponto_referencia'])"
+                ></br-input>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="orientacao_acesso"
+                  name="orientacao_acesso"
+                  placeholder="Acesso por..."
+                  label="Há orientação para acesso?"
+                  formControlName="orientacao_acesso"
+                  (input)="handleInput(['orientacao_acesso'])"
+                ></br-input>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="nome_gestor"
+                  name="nome_gestor"
+                  placeholder="Nome do gestor do abrigo"
+                  label="Nome do gestor do abrigo:"
+                  formControlName="nome_gestor"
+                  (input)="handleInput(['nome_gestor'])"
+                >
+                </br-input>
+                <div *ngIf="form.get('nome_gestor').invalid && form.get('nome_gestor').touched">
+                  <div *ngIf="form.get('nome_gestor').errors.required">
+                    <app-message
+                      [control]="form.get('nome_gestor')"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="telefone_gestor"
+                  name="telefone_gestor"
+                  placeholder="Telefone do gestor do abrigo"
+                  label="Telefone do gestor do abrigo:"
+                  formControlName="telefone_gestor"
+                  (input)="handleInput(['telefone_gestor'])"
+                  mask="(##) #####-####"
+                ></br-input>
+                <div *ngIf="form.get('telefone_gestor').invalid && form.get('telefone_gestor').touched">
+                  <div *ngIf="form.get('telefone_gestor').errors.required">
+                    <app-message
+                      [control]="form.get('telefone_gestor')"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- equipe de apoio -->
+          <div class="mb-3" formArrayName="equipe_apoio">
+            <div class="row align-items-center">
+              <h4 class="pl-baseh">Equipe de apoio</h4>
+              <br-button
+                circle
+                id="addVolunteer"
+                primary
+                icon="plus"
+                type="primary"
+                class="ml-1 mt-2 small"
+                (click)="addVolunteer()"
+              >
+              </br-button>
+            </div>
+            <div
+              class="row align-items-end"
+              *ngFor="let volunteer of form.get('equipe_apoio').value; let vi = index; trackBy: volunteerTrack"
+            >
+              <div class="col">
+                <br-input
+                  type="text"
+                  [id]="'apoio_responsavel' + vi.toString()"
+                  placeholder="Nome do integrante da equipe de apoio"
+                  label="Nome do integrante da equipe de apoio:"
+                  [value]="volunteer.apoio_responsavel"
+                  (input)="handleInputVolunteer(vi, 'apoio_responsavel', $event)"
+                ></br-input>
+              </div>
+
+              <div class="col">
+                <br-input
+                  type="text"
+                  [id]="'apoio_telefone' + vi.toString()"
+                  label="Telefone do integrante da equipe de apoio:"
+                  [value]="volunteer.apoio_telefone"
+                  mask="(##) #####-####"
+                  placeholder="(##) #####-####"
+                  (input)="handleInputVolunteer(vi, 'apoio_telefone', $event)"
+                ></br-input>
+              </div>
+              <br-button
+                circle
+                id="deleteVolunteer"
+                primary
+                icon="minus"
+                type="primary"
+                class="small mr-4 mb-1"
+                (click)="removeVolunteer(vi)"
+              >
+              </br-button>
+            </div>
+          </div>
+
+          <!-- vagas -->
+          <div class="mb-3">
+            <div class="row">
+              <div formGroupName="vagas_info" class="col">
+                <br-input
+                  type="text"
+                  id="vagas_totais"
+                  name="vagas_totais"
+                  placeholder="Número de vagas totais"
+                  label="Número de vagas totais:"
+                  formControlName="vagas_totais"
+                  (input)="handleInput(['vagas_info', 'vagas_totais'])"
+                ></br-input>
+                <div
+                  *ngIf="
+                    form.get(['vagas_info', 'vagas_totais']).invalid && form.get(['vagas_info', 'vagas_totais']).touched
+                  "
+                >
+                  <div *ngIf="form.get(['vagas_info', 'vagas_totais']).errors.required">
+                    <app-message
+                      [control]="form.get(['vagas_info', 'vagas_totais'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+              <div formGroupName="vagas_info" class="col">
+                <br-input
+                  type="text"
+                  id="vagas_ocupadas"
+                  name="vagas_ocupadas"
+                  placeholder="Número de vagas ocupadas"
+                  label="Número de vagas ocupadas:"
+                  formControlName="vagas_ocupadas"
+                  (input)="handleInput(['vagas_info', 'vagas_ocupadas'])"
+                >
+                </br-input>
+                <div
+                  *ngIf="
+                    form.get(['vagas_info', 'vagas_ocupadas']).invalid &&
+                    form.get(['vagas_info', 'vagas_ocupadas']).touched
+                  "
+                >
+                  <div *ngIf="form.get(['vagas_info', 'vagas_ocupadas']).errors.required">
+                    <app-message
+                      [control]="form.get(['vagas_info', 'vagas_ocupadas'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- vagas exclusivas -->
+          <div formGroupName="vagas_info" class="mb-3">
+            <div class="row">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="vaga_mulher"
+                    name="vaga_mulher"
+                    formControlName="vaga_mulher"
+                    (change)="
+                      changeSwitch($event, [
+                        ['vagas_info', 'vaga_mulher_quantidade'],
+                        ['vagas_info', 'vaga_mulher_quantidade_ocupadas']
+                      ])
+                    "
+                  />
+                  <label for="vaga_mulher">Tem vagas exclusivas mulheres e crianças?</label>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="vaga_mulher_quantidade"
+                  name="vaga_mulher_quantidade"
+                  placeholder="Número de vagas mulheres/crianças"
+                  label="Número de vagas mulheres/crianças:"
+                  formControlName="vaga_mulher_quantidade"
+                  (input)="handleInput(['vagas_info', 'vaga_mulher_quantidade'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['vagas_info', 'vaga_mulher_quantidade']).invalid">
+                  <app-message
+                    [control]="form.get(['vagas_info', 'vaga_mulher_quantidade'])"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="vaga_mulher_quantidade_ocupadas"
+                  name="vaga_mulher_quantidade_ocupadas"
+                  placeholder="Número de vagas mulheres/crianças ocupadas"
+                  label="Número de vagas mulheres/crianças ocupadas:"
+                  formControlName="vaga_mulher_quantidade_ocupadas"
+                  (input)="handleInput(['vagas_info', 'vaga_mulher_quantidade_ocupadas'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['vagas_info', 'vaga_mulher_quantidade_ocupadas']).invalid">
+                  <app-message
+                    [control]="form.get(['vagas_info', 'vaga_mulher_quantidade_ocupadas'])"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="vaga_pets"
+                    name="vaga_pets"
+                    formControlName="vaga_pets"
+                    (change)="
+                      changeSwitch($event, [
+                        ['vagas_info', 'vaga_pets_quantidade'],
+                        ['vagas_info', 'vaga_pets_quantidade_ocupadas']
+                      ])
+                    "
+                  />
+                  <label for="vaga_pets">Recebe pets?</label>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="vaga_pets_quantidade"
+                  name="vaga_pets_quantidade"
+                  placeholder="Número de vagas pets"
+                  label="Número de vagas pets:"
+                  formControlName="vaga_pets_quantidade"
+                  (input)="handleInput(['vagas_info', 'vaga_pets_quantidade'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['vagas_info', 'vaga_pets_quantidade']).invalid">
+                  <app-message
+                    [control]="form.get(['vagas_info', 'vaga_pets_quantidade'])"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="vaga_pets_quantidade_ocupadas"
+                  name="vaga_pets_quantidade_ocupadas"
+                  placeholder="Número de vagas ocupadas para pets"
+                  label="Número de vagas ocupadas para pets:"
+                  formControlName="vaga_pets_quantidade_ocupadas"
+                  (input)="handleInput(['vagas_info', 'vaga_pets_quantidade_ocupadas'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['vagas_info', 'vaga_pets_quantidade_ocupadas']).invalid">
+                  <app-message
+                    [control]="form.get(['vagas_info', 'vaga_pets_quantidade_ocupadas'])"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- tipo abrigo -->
+          <div class="mb-3">
+            <div class="row">
+              <div class="col">
+                <br-select
+                  multiple
+                  label="Tipo de local"
+                  placeholder="Tipo de local"
+                  [options]="localOptions"
+                  (change)="changeSelect($event, ['local_info', 'tipo_local'])"
+                >
+                </br-select>
+              </div>
+              <div class="col">
+                <br-select
+                  label="Classificação do local"
+                  placeholder="Classificação do local"
+                  [options]="classificacaoOptions"
+                  (change)="changeSelect($event, ['local_info', 'classificacao_local'])"
+                >
+                </br-select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div *ngIf="form.get(['local_info', 'tipo_local']).value?.indexOf('Abrigo') >= 0" class="mt-3">
+                  <br-select
+                    multiple
+                    label="Tipo de abrigo"
+                    placeholder="Tipo de abrigo"
+                    [options]="abrigoOptions"
+                    (change)="changeSelect($event, ['local_info', 'tipo_abrigo'])"
+                  >
+                  </br-select>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  formGroupName="local_info"
+                  *ngIf="form.get(['local_info', 'classificacao_local']).value?.indexOf('Outro') >= 0"
+                  class="mt-3"
+                >
+                  <br-input
+                    type="text"
+                    id="classificacao_local_outro"
+                    name="classificacao_local_outro"
+                    placeholder="Digite outra classificação do local"
+                    label="Digite outra classificação do local:"
+                    formControlName="classificacao_local_outro"
+                    (input)="handleInput(['local_info', 'classificacao_local_outro'])"
+                  ></br-input>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- infra do abrigo -->
+          <div formGroupName="infra_info" class="mb-3">
+            <div class="row">
+              <div class="col">
+                <br-input
+                  [type]="'text'"
+                  id="metragem"
+                  name="metragem"
+                  placeholder="Qual a metragem do ambiente"
+                  label="Qual a metragem do ambiente"
+                  formControlName="metragem"
+                  (input)="handleInput(['infra_info', 'metragem'])"
+                >
+                </br-input>
+                <div
+                  *ngIf="form.get(['infra_info', 'metragem']).invalid && form.get(['infra_info', 'metragem']).touched"
+                >
+                  <div *ngIf="form.get('metragem').errors.required">
+                    <app-message
+                      [control]="form.get('metragem')"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="banheiros"
+                  name="banheiros"
+                  placeholder="Quantidade de banheiros"
+                  label="Quantidade de banheiros:"
+                  formControlName="banheiros"
+                  (input)="handleInput(['infra_info', 'banheiros'])"
+                >
+                </br-input>
+                <div *ngIf="form.get(['infra_info', 'banheiros']).invalid && form.get('banheiros').touched">
+                  <div *ngIf="form.get(['infra_info', 'banheiros']).errors.required">
+                    <app-message
+                      [control]="form.get(['infra_info', 'banheiros'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <br-input
+                  [type]="'text'"
+                  id="chuveiros"
+                  name="chuveiros"
+                  placeholder="Quantidade de chuveiros"
+                  label="Quantidade de chuveiros"
+                  formControlName="chuveiros"
+                  (input)="handleInput(['infra_info', 'chuveiros'])"
+                >
+                </br-input>
+                <div
+                  *ngIf="form.get(['infra_info', 'chuveiros']).invalid && form.get(['infra_info', 'chuveiros']).touched"
+                >
+                  <div *ngIf="form.get(['infra_info', 'chuveiros']).errors.required">
+                    <app-message
+                      [control]="form.get(['infra_info', 'chuveiros'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <br-input
+                  [type]="'text'"
+                  id="colchoes"
+                  name="colchoes"
+                  placeholder="Quantidade de colchões"
+                  label="Quantidade de colchoes"
+                  formControlName="colchoes"
+                  (input)="handleInput(['infra_info', 'colchoes'])"
+                >
+                </br-input>
+                <div
+                  *ngIf="form.get(['infra_info', 'colchoes']).invalid && form.get(['infra_info', 'colchoes']).touched"
+                >
+                  <div *ngIf="form.get(['infra_info', 'colchoes']).errors.required">
+                    <app-message
+                      [control]="form.get(['infra_info', 'colchoes'])"
+                      error="required"
+                      message="O campo é obrigatório"
+                    ></app-message>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="acessibilidade"
+                    name="acessibilidade"
+                    formControlName="acessibilidade"
+                  />
+                  <label for="acessibilidade">Há acessibilidade?</label>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  [type]="'text'"
+                  id="obs_acessibilidade"
+                  name="obs_acessibilidade"
+                  placeholder="Quais acessibilidades"
+                  label="Quais acessibilidades?"
+                  formControlName="obs_acessibilidade"
+                  (input)="handleInput(['infra_info', 'obs_acessibilidade'])"
+                >
+                </br-input>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="climatizacao"
+                    name="climatizacao"
+                    formControlName="climatizacao"
+                  />
+                  <label for="climatizacao">Há infraestrutura de climatização?</label>
+                </div>
+              </div>
+              <div class="col">
+                <br-input
+                  [type]="'text'"
+                  id="obs_climatizacao"
+                  name="obs_climatizacao"
+                  placeholder="Quais e quantos aparelhos de climatização"
+                  label="Quais e quantos aparelhos de climatização?"
+                  formControlName="obs_climatizacao"
+                  (input)="handleInput(['infra_info', 'obs_climatizacao'])"
+                >
+                </br-input>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="fornecimento_agua"
+                    name="fornecimento_agua"
+                    formControlName="fornecimento_agua"
+                  />
+                  <label for="fornecimento_agua">Há fornecimento de água?</label>
+                </div>
+              </div>
+
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="enfermaria"
+                    name="enfermaria"
+                    formControlName="enfermaria"
+                  />
+                  <label for="enfermaria">Há enfermaria?</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="fornecimento_eletrica"
+                    name="fornecimento_eletrica"
+                    formControlName="fornecimento_eletrica"
+                  />
+                  <label for="fornecimento_eletrica">Há fornecimento de energia?</label>
+                </div>
+              </div>
+
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="gerador"
+                    name="gerador"
+                    formControlName="gerador"
+                  />
+                  <label for="gerador">Há gerador</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col d-flex justify-content-start align-items-center switch-col">
+                <div class="br-switch" role="presentation">
+                  <input
+                    checked="checked"
+                    type="checkbox"
+                    role="switch"
+                    id="cozinha"
+                    name="cozinha"
+                    formControlName="cozinha"
+                  />
+                  <label for="cozinha">Tem cozinha?</label>
+                </div>
+              </div>
+              <div class="col"></div>
+            </div>
+          </div>
+
+          <!-- infra de atendimento -->
+
+          <div formGroupName="atendimento_info" class="row mt-3">
+            <div class="col">
+              <br-input
+                [type]="'text'"
+                id="qtd_voluntarios"
+                name="qtd_voluntarios"
+                placeholder="Quantidade de voluntários"
+                label="Quantidade de voluntários?"
+                formControlName="qtd_voluntarios"
+                (input)="handleInput(['atendimento_info', 'qtd_voluntarios'])"
+              >
+              </br-input>
+            </div>
+            <div class="col"></div>
+          </div>
+
+          <div formGroupName="atendimento_info" class="row mt-3">
+            <div class="col d-flex justify-content-start align-items-center switch-col">
+              <div class="br-switch" role="presentation">
+                <input
+                  checked="checked"
+                  type="checkbox"
+                  role="switch"
+                  id="atendimento"
+                  name="atendimento"
+                  formControlName="atendimento"
+                />
+                <label for="atendimento">Há atendimento de saúde?</label>
+              </div>
+            </div>
+
+            <div class="col">
+              <br-select
+                label="Quais atendimentos de saúde"
+                placeholder="Quais atendimentos de saúde?"
+                [options]="atendimentoOptions"
+                multiple
+                (change)="changeSelect($event, ['atendimento_info', 'apoio_medico'])"
+              >
+              </br-select>
+            </div>
+          </div>
+
+          <div formGroupName="atendimento_info" class="row mt-3">
+            <div class="col d-flex justify-content-start align-items-center switch-col">
+              <div class="br-switch" role="presentation">
+                <input
+                  checked="checked"
+                  type="checkbox"
+                  role="switch"
+                  id="medicamentos"
+                  name="medicamentos"
+                  formControlName="medicamentos"
+                />
+                <label for="medicamentos">Há fornecimento de medicamentos?</label>
+              </div>
+            </div>
+
+            <div class="col">
+              <br-input
+                [type]="'text'"
+                id="apoio_medicamentos"
+                name="apoio_medicamentos"
+                placeholder="Quais medicamentos"
+                label="Quais medicamentos?"
+                formControlName="apoio_medicamentos"
+                (input)="handleInput(['atendimento_info', 'apoio_medicamentos'])"
+              >
+              </br-input>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <br-input
+                [type]="'text'"
+                id="observations"
+                name="observations"
+                placeholder="Observações"
+                label="Observações:"
+                formControlName="observations"
+                (input)="handleInput(['observations'])"
+              >
+              </br-input>
+            </div>
+          </div>
+        </div>
+
+        <div [style]="typeEdit == 2 || typeEdit == 0 ? '' : 'display: none'">
+          <div class="row" style="margin-left: 0">
+            <h4 style="margin-top: 0">Itens de necessidade do abrigo</h4>
+            <br-button
+              circle
+              class="small"
+              [icon]="itensUtilOpened ? 'chevron-up' : 'chevron-down'"
+              (click)="toggleSelectItemUteis()"
+              tooltip="Expandir lista"
+            ></br-button>
+          </div>
+          <div *ngIf="itensUtilOpened" style="display: flex; flex-direction: column; align-items: end">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 300px);
+                grid-template-rows: repeat(auto-fill);
+                width: 100%;
+                flex: 1 1 0;
+              "
+            >
+              <br-checkbox
+                *ngFor="let item of itensUteis"
+                [label]="item.label"
+                [checked]="item.selected"
+                (click)="selectItemUteis(item)"
+              ></br-checkbox>
+            </div>
+            <br-button
+              secondary
+              label="outro"
+              icon="plus"
+              (click)="addOtherItem()"
+              tooltip="Adicionar um item não contido na lista"
+            ></br-button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of form.get('itensUteis').value; let i = index; trackBy: trackByItemUtil">
+                <td *ngIf="item.type === 'custom'" style="width: 100%">
+                  <br-input
+                    type="text"
+                    [id]="'item' + i.toString()"
+                    name="'item' + i.toString()"
+                    placeholder="Digite o item"
+                    [value]="item.item"
+                    (input)="handleInputItenUtil(i, $event, true)"
+                  ></br-input>
+                </td>
+                <td *ngIf="item.type !== 'custom'" style="width: 100%">{{ item.item }}</td>
+                <td style="width: 150px; display: flex; flex-direction: row">
+                  <br-input
+                    type="text"
+                    [id]="'qtd' + i.toString()"
+                    [name]="'qtd' + i.toString()"
+                    placeholder="Quantidade"
+                    [value]="item.quantidade"
+                    (input)="handleInputItenUtil(i, $event, false)"
+                  ></br-input>
+                  <br-button
+                    *ngIf="item.type === 'custom'"
+                    class="small"
+                    circle
+                    icon="minus"
+                    (click)="deleteItem(i)"
+                  ></br-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mt-3 d-flex justify-content-md-end stick-on-top">
+        <br-button
+          id="enviar"
+          label="Enviar Formulário"
+          type="primary"
+          class="mt-3 mr-1"
+          (click)="onSubmit()"
+          tooltip-text="Salvar informações"
+          tooltip-place="top"
+          tooltip-type="info"
+        >
+        </br-button>
+        <br-button
+          id="fechar"
+          label="Fechar Formulário"
+          type="secondary"
+          class="mt-3 mr-1"
+          (click)="closeModal()"
+          tooltip-text="Fechar o formulário"
+          tooltip-place="top"
+          tooltip-type="info"
+        >
+        </br-button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row row-action">
+  <div class="col">
+    <h1>Lista de abrigos</h1>
+  </div>
+  <div class="col items-col-left" appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_SUPORTE">
+    <br-button
+      id="addAbrigo"
+      label="Cadastrar Abrigo"
+      type="primary"
+      class="mt-3 mr-1"
+      (click)="openModalAdd()"
+      icon="plus"
+      title="Cadastrar um novo abrigo"
+    ></br-button>
+    <br-button
+      *ngIf="permission"
+      id="exportTable"
+      label="Exportar"
+      icon="table"
+      type="primary"
+      class="mt-3 mr-1"
+      title="Exportar dados em excel"
+      (click)="exportToExcel()"
+    ></br-button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="card-deck">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Total de Abrigos</h6>
+          <p class="card-text">{{ (listaFiltrada | async).length }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Total de Vagas</h6>
+          <p class="card-text">{{ calcularTotalVagas(listaFiltrada | async) }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Total de Vagas Ocupadas</h6>
+          <p class="card-text">{{ calcularTotalVagasOcupadas(listaFiltrada | async) }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Total de Vagas Disponíveis</h6>
+          <p class="card-text">{{ calcularVagasDisponiveis(listaFiltrada | async) }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Porcentagem de Vagas Ocupadas</h6>
+          <p class="card-text">{{ calcularPorcentagemVagasOcupadas(listaFiltrada | async) }}%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <br-select
+      multiple
+      class="mr-1"
+      style="z-index: 2"
+      [options]="citiesOptionsSearch"
+      label="Cidades:"
+      (change)="handleChangeCity($event)"
+    >
+    </br-select>
+  </div>
+  <div class="col">
+    <br-select
+      multiple
+      class="mr-1"
+      style="z-index: 2"
+      [options]="classificacaoOptionsSearch"
+      label="Classificação do local"
+      (change)="handleChangeClassificacao($event)"
+    >
+    </br-select>
+  </div>
+  <div class="col">
+    <br-input
+      type="text"
+      placeholder="Pesquisar por abrigo ou cidade"
+      label="Busca:"
+      [(ngModel)]="searchText"
+      (input)="search()"
+    ></br-input>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="table-wrapper">
+      <table class="br-table">
+        <thead>
+          <tr>
+            <th>Ação</th>
+            <th>Nome</th>
+            <th>Cidade</th>
+            <th>Abrigo oficial</th>
+            <th>Nome do Contato</th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+
+            <th>Vagas</th>
+            <th>Vagas Ocupadas</th>
+            <th>Vagas Disponíveis</th>
+
+            <th>Banheiros</th>
+            <th>Colchões</th>
+            <th>Cozinha</th>
+            <th>Observação</th>
+            <th>Última alteração</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let abrigo of currentPageItems" (click)="handleEditAbrigo(abrigo)">
+            <td>
+              <div class="actions-button-flex">
+                <br-button
+                  type="primary"
+                  icon="edit"
+                  circle
+                  class="small mr-1"
+                  title="Editar abrigo"
+                  (click)="openEditModalData()"
+                  appAuthorization
+                  [level]="authorizationService.AUTHORIZATION_LEVEL_CONTROLADOR"
+                ></br-button>
+                <br-button
+                  type="primary"
+                  icon="list"
+                  circle
+                  class="small"
+                  title="Editar necessidades do abrigo"
+                  (click)="openEditModalNeed()"
+                ></br-button>
+              </div>
+            </td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.nome }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.endereco.cidade }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.local_info["tipo_local_grid"] }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.nome_gestor }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.endereco.rua }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.telefone_gestor }}</td>
+
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.vagas_info.vagas_totais }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.vagas_info.vagas_ocupadas }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">
+              {{ abrigo.vagas_info.vagas_totais - abrigo.vagas_info.vagas_ocupadas }}
+            </td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.infra_info.banheiros }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.infra_info.colchoes }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.infra_info.cozinha | simNao }}</td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">
+              {{ abrigo.ponto_referencia }} | {{ abrigo.orientacao_acesso }}
+            </td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">
+              <!-- <p *ngIf="isValidDate(abrigo?.update_in)">{{ updateIn(abrigo?.update_in) | date: "dd/MM/YY HH:mm" }}</p> -->
+              <p *ngIf="isValidDate(abrigo?.update_in)">{{ updateIn(abrigo?.update_in) }}</p>
+            </td>
+            <td [ngClass]="{ disabled: !abrigo.ativo }">{{ abrigo.local_info["tipo_abrigo_grid"] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      label="abrigos"
+      [itemsPerPage]="itemsPerPage"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [totalItems]="totalItems"
+      (pageChange)="handlePageChange($event)"
+      (itemsPerPageChange)="handleItemsPerPageChange($event)"
+    >
+    </app-pagination>
+  </div>
+</div>

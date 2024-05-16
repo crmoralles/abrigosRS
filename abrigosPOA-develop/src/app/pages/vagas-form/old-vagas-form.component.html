@@ -1,0 +1,591 @@
+<br-message [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+<br-scrim center-content="" *ngIf="modalShow" show disable-close-on-click="true">
+  <br-modal
+    *ngIf="modalShow"
+    title="{{ titleModal }}"
+    show
+    closable
+    style="max-width: none; width: 80vw"
+    (close-modal)="closeModal()"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div [style]="typeEdit == 1 || typeEdit == 0 ? '' : 'display: none'">
+        <!-- nome -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Nome"
+                label="Nome do abrigo:"
+                formControlName="nome"
+                (input)="handleInput('nome')"
+              ></br-input>
+              <div *ngIf="form.get('nome').invalid && form.get('nome').touched">
+                <div *ngIf="form.get('nome').errors.required">
+                  <app-message
+                    [control]="form.get('nome')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <br-select
+                label="Tipo"
+                placeholder="Tipo"
+                [options]="typeOptions"
+                (change)="changeSelect($event, 'tipo')"
+              >
+              </br-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- unidade e contato -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col d-flex justify-content-start align-items-end">
+              <div class="br-switch" role="presentation">
+                <input
+                  checked="checked"
+                  type="checkbox"
+                  role="switch"
+                  id="abrigopm"
+                  name="abrigopm"
+                  formControlName="abrigopm"
+                />
+                <label for="abrigopm">Abrigo da rede da Prefeitura Municipal?</label>
+              </div>
+            </div>
+            <div class="col">
+              <br-input
+                type="text"
+                id="nome_contato"
+                name="nome_contato"
+                placeholder="Nome Contato"
+                label="Nome Contato:"
+                formControlName="nome_contato"
+                (input)="handleInput('nome_contato')"
+              >
+              </br-input>
+              <div *ngIf="form.get('nome_contato').invalid && form.get('nome_contato').touched">
+                <div *ngIf="form.get('nome_contato').errors.required">
+                  <app-message
+                    [control]="form.get('nome_contato')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- telefone -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="telefone"
+                name="telefone"
+                placeholder="Telefone"
+                label="Telefone:"
+                formControlName="telefone"
+                (input)="handleInput('telefone')"
+                mask="(##) #####-####"
+              ></br-input>
+              <div *ngIf="form.get('telefone').invalid && form.get('telefone').touched">
+                <div *ngIf="form.get('telefone').errors.required">
+                  <app-message
+                    [control]="form.get('telefone')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- vagas -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="vagas"
+                name="vagas"
+                placeholder="Vagas"
+                label="Vagas:"
+                formControlName="vagas"
+                (input)="handleInput('vagas')"
+              ></br-input>
+              <div *ngIf="form.get('vagas').invalid && form.get('vagas').touched">
+                <div *ngIf="form.get('vagas').errors.required">
+                  <app-message
+                    [control]="form.get('vagas')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <br-input
+                type="text"
+                id="vagas_ocupadas"
+                name="vagas_ocupadas"
+                placeholder="Vagas Ocupadas"
+                label="Vagas Ocupadas:"
+                formControlName="vagas_ocupadas"
+                (input)="handleInput('vagas_ocupadas')"
+              >
+              </br-input>
+              <div *ngIf="form.get('vagas_ocupadas').invalid && form.get('vagas_ocupadas').touched">
+                <div *ngIf="form.get('vagas_ocupadas').errors.required">
+                  <app-message
+                    [control]="form.get('vagas_ocupadas')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- infra do abrigo -->
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="banheiros"
+                name="banheiros"
+                placeholder="Quantidade de banheiros"
+                label="Quantidade de banheiros:"
+                formControlName="banheiros"
+                (input)="handleInput('banheiros')"
+              >
+              </br-input>
+              <div *ngIf="form.get('banheiros').invalid && form.get('banheiros').touched">
+                <div *ngIf="form.get('banheiros').errors.required">
+                  <app-message
+                    [control]="form.get('banheiros')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <br-input
+                [type]="'text'"
+                id="colchoes"
+                name="colchoes"
+                placeholder="Quantidade de colchões"
+                label="Quantidade de colchoes"
+                formControlName="colchoes"
+                (input)="handleInput('colchoes')"
+              >
+              </br-input>
+              <div *ngIf="form.get('colchoes').invalid && form.get('colchoes').touched">
+                <div *ngIf="form.get('colchoes').errors.required">
+                  <app-message
+                    [control]="form.get('colchoes')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <br-input
+                [type]="'text'"
+                id="marmita"
+                name="marmita"
+                placeholder="Quantidade de marmita"
+                label="Quantidade de marmita"
+                formControlName="marmita"
+                (input)="handleInput('marmita')"
+              >
+              </br-input>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <div class="br-switch" role="presentation">
+                <input
+                  checked="checked"
+                  type="checkbox"
+                  role="switch"
+                  id="cozinha"
+                  name="cozinha"
+                  formControlName="cozinha"
+                />
+                <label for="cozinha">Tem cozinha?</label>
+              </div>
+
+              <div *ngIf="form.get('cozinha').invalid && form.get('cozinha').touched">
+                <div *ngIf="form.get('cozinha').errors.required">
+                  <app-message
+                    [control]="form.get('cozinha')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="br-switch" role="presentation">
+                <input
+                  id="insumos_refeicao"
+                  type="checkbox"
+                  name="insumos_refeicao"
+                  checked="checked"
+                  role="switch"
+                  formControlName="insumos_refeicao"
+                />
+                <label for="insumos_refeicao">Precisa de insumos para refeição?</label>
+              </div>
+
+              <div *ngIf="form.get('insumos_refeicao').invalid && form.get('insumos_refeicao').touched">
+                <div *ngIf="form.get('insumos_refeicao').errors.required">
+                  <app-message
+                    [control]="form.get('insumos_refeicao')"
+                    error="required"
+                    message="O campo é obrigatório"
+                  ></app-message>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="row">
+            <div class="col">
+              <br-input
+                type="text"
+                id="cep"
+                name="cep"
+                placeholder="CEP"
+                label="CEP:"
+                formControlName="cep"
+                autocomplete="off"
+                mask="##.###-###"
+                (blur)="buscarEnderecoPorCep(form.get('cep').value)"
+              ></br-input>
+            </div>
+            <div class="col">
+              <br-input id="city" name="city" label="Cidade" placeholder="Cidade" formControlName="city"> </br-input>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <br-input
+            type="text"
+            id="address"
+            name="address"
+            placeholder="Endereço"
+            label="Endereço:"
+            formControlName="address"
+            (input)="handleInput('address')"
+          ></br-input>
+        </div>
+
+        <div class="mb-3">
+          <br-input
+            type="text"
+            id="observations"
+            name="observations"
+            placeholder="Observações"
+            label="Observações:"
+            formControlName="observations"
+            (input)="handleInput('observations')"
+          ></br-input>
+        </div>
+      </div>
+      <div [style]="typeEdit == 2 || typeEdit == 0 ? '' : 'display: none'">
+        <h3>Itens de necessidade do abrigo</h3>
+        <!-- <form [formGroup]="formUteis">
+          <div class="mb-3">
+            <div class="row">
+              <div class="col">
+                <mat-form-field>
+                  <mat-label class="label-custom">Categoria</mat-label>
+                  <select class="select" matNativeControl formControlName="categoria">
+                    <option *ngFor="let categorie of categories" [value]="categorie.viewValue">
+                      {{ categorie.viewValue }}
+                    </option>
+                  </select>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <br-input
+                  type="text"
+                  id="item"
+                  name="item"
+                  placeholder="item"
+                  label="Item:"
+                  formControlName="item"
+                  (input)="handleInput('item')"
+                >
+                </br-input>
+              </div>
+              <div class="col">
+                <br-input
+                  type="number"
+                  id="quantidade"
+                  name="quantidade"
+                  placeholder="quantidade"
+                  label="Quantidade:"
+                  formControlName="quantidade"
+                  (input)="handleInput('quantidade')"
+                >
+                </br-input>
+              </div>
+              <div class="col">
+                <br-button
+                  [disabled]="!formUteis.valid"
+                  id="enviar"
+                  [label]="editIndex !== null ? 'Salvar' : 'Adicionar'"
+                  type="primary"
+                  class="mt-3 mr-1"
+                  (click)="addItem()"
+                >
+                </br-button>
+              </div>
+            </div>
+          </div>
+        </form> -->
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 300px);
+            grid-template-rows: repeat(auto-fill);
+            width: 100%;
+          "
+        >
+          <br-checkbox
+            *ngFor="let item of itensUteis"
+            [label]="item.label"
+            [checked]="item.selected"
+            (click)="selectItemUteis(item)"
+          ></br-checkbox>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of form.get('itensUteis').value; let i = index; trackBy: trackByItemUtil">
+              <td>{{ item.item }}</td>
+              <td style="width: 100px">
+                <br-input
+                  type="text"
+                  [id]="'qtd' + i.toString()"
+                  name="'qtd' + i.toString()"
+                  placeholder="Quantidade"
+                  label="Quantidade:"
+                  [value]="item.quantidade"
+                  (input)="handleInputQtd(i, $event)"
+                ></br-input>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-3 d-flex justify-content-md-end">
+        <br-button
+          id="enviar"
+          label="Enviar Formulário"
+          type="primary"
+          class="mt-3 mr-1"
+          (click)="onSubmit()"
+          tooltip-text="{{ titleModal }}"
+          tooltip-place="top"
+          tooltip-type="info"
+        >
+        </br-button>
+        <br-button
+          id="fechar"
+          label="Fechar Formulário"
+          type="secondary"
+          class="mt-3 mr-1"
+          (click)="closeModal()"
+          tooltip-text="Fechar o formulário"
+          tooltip-place="top"
+          tooltip-type="info"
+        >
+        </br-button>
+      </div>
+    </form>
+  </br-modal>
+</br-scrim>
+
+<div class="row row-action">
+  <div class="col">
+    <h1>Lista de abrigos</h1>
+  </div>
+  <div class="col items-col-left" appAuthorization [level]="authorizationService.AUTHORIZATION_LEVEL_SUPORTE">
+    <br-button
+      id="addAbrigo"
+      label="Cadastrar Abrigo"
+      type="primary"
+      class="mt-3 mr-1"
+      (click)="openModalAdd()"
+      icon="plus"
+      title="Cadastrar um novo abrigo"
+    ></br-button>
+    <br-button
+      *ngIf="permission"
+      id="exportTable"
+      label="Exportar"
+      icon="table"
+      type="primary"
+      class="mt-3 mr-1"
+      title="Exportar dados em excel"
+      (click)="exportToExcel()"
+    ></br-button>
+  </div>
+</div>
+<!--<p>Clique na linha que deseja editar</p>-->
+
+<div class="card-deck">
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title">Total de Abrigos</h6>
+      <p class="card-text">{{ (listaFiltrada | async).length }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title">Total de Vagas</h6>
+      <p class="card-text">{{ calcularTotalVagas(listaFiltrada | async) }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title">Total de Vagas Ocupadas</h6>
+      <p class="card-text">{{ calcularTotalVagasOcupadas(listaFiltrada | async) }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title">Total de Vagas Disponíveis</h6>
+      <p class="card-text">{{ calcularVagasDisponiveis(listaFiltrada | async) }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h6 class="card-title">Porcentagem de Vagas Ocupadas</h6>
+      <p class="card-text">{{ calcularPorcentagemVagasOcupadas(listaFiltrada | async) }}%</p>
+    </div>
+  </div>
+</div>
+
+<br-input
+  type="text"
+  placeholder="Pesquisar por abrigo ou cidade"
+  label="Busca:"
+  [(ngModel)]="searchText"
+  (input)="search()"
+></br-input>
+<div class="table-wrapper">
+  <table class="br-table">
+    <thead>
+      <tr>
+        <th>Ação</th>
+        <th>Nome</th>
+        <th>Cidade</th>
+        <th>PM</th>
+        <th>Abrigo oficial</th>
+        <th>Nome do Contato</th>
+        <th>Endereço</th>
+        <th>Telefone</th>
+
+        <th>Vagas</th>
+        <th>Vagas Ocupadas</th>
+        <th>Vagas Disponíveis</th>
+
+        <th>Demanda</th>
+        <th>Banheiros</th>
+        <th>Colchões</th>
+        <th>Marmita</th>
+        <th>Cozinha</th>
+        <th>Insumos Refeição</th>
+
+        <th>Estrutura para Pessoas</th>
+        <th>observações</th>
+        <th>Última alteração</th>
+        <th>Coordenadas</th>
+        <th>Tipo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let abrigo of listaFiltrada | async" (click)="editAbrigo(abrigo)">
+        <td>
+          <div class="actions-button-flex">
+            <br-button
+              type="primary"
+              icon="edit"
+              title="Editar abrigo"
+              (click)="openEditModalData()"
+              appAuthorization
+              [level]="authorizationService.AUTHORIZATION_LEVEL_CONTROLADOR"
+            ></br-button>
+            <br-button
+              type="primary"
+              icon="list"
+              title="Editar necessidades do abrigo"
+              (click)="openEditModalNeed()"
+            ></br-button>
+          </div>
+        </td>
+        <td>{{ abrigo.nome }}</td>
+        <td>{{ abrigo.city }}</td>
+        <td>{{ abrigo.pmpa }}</td>
+        <td>{{ abrigo.abrigopm ? "Sim" : "Não" }}</td>
+        <td>{{ abrigo.nome_contato }}</td>
+        <td>{{ abrigo.address }}</td>
+        <td>{{ abrigo.telefone }}</td>
+
+        <td>{{ abrigo.vagas }}</td>
+        <td>{{ abrigo.vagas_ocupadas }}</td>
+        <td>{{ abrigo.vagas - abrigo.vagas_ocupadas }}</td>
+        <td>{{ abrigo.demanda }}</td>
+        <td>{{ abrigo.banheiros }}</td>
+        <td>{{ abrigo.colchoes }}</td>
+        <td>{{ abrigo.marmita }}</td>
+        <td>{{ abrigo.cozinha | simNao }}</td>
+        <td>{{ abrigo.insumos_refeicao | simNao }}</td>
+        <td>{{ abrigo.estrutura_pessoas }}</td>
+        <td>{{ abrigo.observations }}</td>
+        <td>{{ updateIn(abrigo?.update_in) | date: "dd/MM/YY HH:mm" }}</td>
+        <td>{{ abrigo?.latitude }}, {{ abrigo?.longitude }}</td>
+        <td>{{ abrigo?.tipo }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

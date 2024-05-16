@@ -1,0 +1,60 @@
+.items {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.item:hover {
+  background-color: grey;
+}
+
+.br-scrim.foco {
+  overflow: hidden;
+}
+
+:host {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.br-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f2f2f2;
+  z-index: 1;
+}
+
+.modalContent {
+  background-color: white;
+  width: 80%;
+  height: 80%;
+  margin: auto;
+  padding: 30px;
+  overflow: auto;
+}
+
+.cell-xl {
+  min-width: 500px;
+  max-width: 500px;
+  width: 500px;
+}
+
+.cell-lg {
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
+}
+
+.cell-md {
+  min-width: 190px;
+  max-width: 190px;
+  width: 190px;
+}
+
+.cell-sm {
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
+}

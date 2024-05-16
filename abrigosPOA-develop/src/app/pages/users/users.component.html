@@ -1,0 +1,398 @@
+<div style="display: flex; flex-direction: column; width: 100%; height: calc(100% - 7px)">
+  <br-message [state]="messageType" closable *ngIf="this.submitted">{{ message }}</br-message>
+
+  <div *ngIf="modalShow" appModal>
+    <div class="modalContent">
+      <h4>{{ titleModal }}</h4>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" style="width: 95%; margin-left: auto; margin-right: auto">
+        <div class="row" style="overflow: hidden">
+          <div class="col">
+            <div class="mb-3">
+              <!-- Bairro -->
+              <div class="row align-items-center">
+                <div class="col">
+                  <br-select
+                    ngDefaultControl
+                    id="role"
+                    name="role"
+                    label="Escolha o perfil de acesso"
+                    placeholder="Perfil de acesso"
+                    [options]="accessRoleOptions"
+                    formControlName="role"
+                    (change)="roleChange($event)"
+                  >
+                  </br-select>
+                  <div *ngIf="userForm.get('role').invalid && userForm.get('role').touched">
+                    <div *ngIf="userForm.get('role').errors.required">
+                      <app-message [control]="userForm.get('role')" error="required" message="O campo é obrigatório">
+                      </app-message>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="row">
+                <!-- cpf -->
+                <div class="col-lg-3 col-1">
+                  <br-input
+                    type="text"
+                    id="cpf"
+                    name="cpf"
+                    placeholder="Ex.: 999.999.999-99"
+                    label="CPF *:"
+                    mask="###.###.###-##"
+                    formControlName="cpf"
+                    (input)="handleInput('cpf')"
+                  >
+                  </br-input>
+                  <div *ngIf="userForm.get('cpf').invalid && userForm.get('cpf').touched">
+                    <div *ngIf="userForm.get('cpf').errors.required">
+                      <app-message [control]="userForm.get('cpf')" error="required" message="O campo é obrigatório">
+                      </app-message>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Nome"
+                    label="Nome *:"
+                    formControlName="name"
+                    (input)="handleInput('name')"
+                  ></br-input>
+                  <div *ngIf="userForm.get('name').invalid && userForm.get('name').touched">
+                    <div *ngIf="userForm.get('name').errors.required">
+                      <app-message
+                        [control]="userForm.get('name')"
+                        error="required"
+                        message="O campo é obrigatório"
+                      ></app-message>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="row">
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="E-mail"
+                    label="E-mail:"
+                    formControlName="email"
+                    (input)="handleInput('email')"
+                  >
+                  </br-input>
+                  <div *ngIf="userForm.get('email').invalid && userForm.get('email').touched">
+                    <div *ngIf="userForm.get('email').errors.required">
+                      <app-message [control]="userForm.get('email')" error="required" message="O campo é obrigatório">
+                      </app-message>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="mobile"
+                    name="mobile"
+                    placeholder="Ex.: (99) 99999-9999"
+                    label="Telefone Celular:"
+                    mask="(##) #####-####"
+                    formControlName="mobile"
+                    (input)="handleInput('mobile')"
+                  >
+                  </br-input>
+                  <div *ngIf="userForm.get('mobile').invalid && userForm.get('mobile').touched">
+                    <div *ngIf="userForm.get('mobile').errors.required">
+                      <app-message [control]="userForm.get('mobile')" error="required" message="O campo é obrigatório">
+                      </app-message>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="row">
+                <!-- CEP -->
+                <div class="col-2">
+                  <br-input
+                    type="text"
+                    id="cep"
+                    name="cep"
+                    placeholder="Ex.: 99999-999"
+                    label="CEP:"
+                    mask="#####-###"
+                    formControlName="cep"
+                    (input)="handleInput('cep')"
+                    (blur)="buscarEnderecoPorCep(userForm.get('cep').value)"
+                  >
+                  </br-input>
+                  <div *ngIf="userForm.get('cep').invalid && userForm.get('cep').touched">
+                    <div *ngIf="userForm.get('cep').errors.required">
+                      <app-message [control]="userForm.get('cep')" error="required" message="O campo é obrigatório">
+                      </app-message>
+                    </div>
+                  </div>
+                </div>
+                <!-- Rua -->
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="Rua"
+                    label="Rua:"
+                    formControlName="address"
+                    (input)="handleInput('address')"
+                  >
+                  </br-input>
+                </div>
+                <!-- numero -->
+                <div class="col-2">
+                  <br-input
+                    type="text"
+                    id="number"
+                    name="number"
+                    placeholder="Número"
+                    label="Número:"
+                    formControlName="number"
+                    (input)="handleInput('number')"
+                  >
+                  </br-input>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="row">
+                <!-- Complemento -->
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="complement"
+                    name="complement"
+                    placeholder="Complemento"
+                    label="Complemento:"
+                    formControlName="complement"
+                    (input)="handleInput('complement')"
+                  >
+                  </br-input>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="row">
+                <!-- Bairro -->
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="district"
+                    name="district"
+                    placeholder="Bairro"
+                    label="Bairro:"
+                    formControlName="district"
+                    (input)="handleInput('district')"
+                  >
+                  </br-input>
+                </div>
+                <!-- Cidade -->
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="city'"
+                    name="city'"
+                    placeholder="Cidade"
+                    label="Cidade:"
+                    formControlName="city"
+                    (input)="handleInput('city')"
+                  >
+                  </br-input>
+                </div>
+                <!-- numero -->
+                <div class="col">
+                  <br-input
+                    type="text"
+                    id="state"
+                    name="state"
+                    placeholder="Estado"
+                    label="Estado:"
+                    formControlName="state"
+                    (input)="handleInput('state')"
+                  >
+                  </br-input>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-3" style="overflow: hidden; display: flex; flex-direction: column">
+            <div class="items">
+              <br-select
+                ngDefaultControl
+                id="cityFilter"
+                name="cityFilter"
+                placeholder="Filter por cidade"
+                [options]="citieOptions"
+                formControlName="filterCityAbrigos"
+                (change)="filterCityChange($event)"
+              >
+              </br-select>
+              <br-input
+                placeholder="Pesquisar Abrigo"
+                icon="search"
+                formControlName="filterAbrigos"
+                (input)="filterAbrigos()"
+              ></br-input>
+            </div>
+            <span style="font-weight: bold">Abrigos vinculados</span>
+            <div style="overflow-y: auto; flex: 1 0 0">
+              <br-list>
+                <br-item *ngFor="let abrigo of abrigosOptionsFilter">
+                  <div class="items" (click)="selectAbrigo(abrigo)">
+                    <span style="margin-left: 10px; margin-right: 10px">
+                      <br-icon-base
+                        *ngIf="abrigo.selected"
+                        icon-name="check"
+                        family-name="fas"
+                        class-name=""
+                      ></br-icon-base>
+                      <br-icon-base
+                        *ngIf="!abrigo.selected"
+                        icon-name=""
+                        family-name="fas"
+                        class-name=""
+                      ></br-icon-base>
+                    </span>
+                    <span>{{ abrigo.label }}</span>
+                  </div>
+                  <br-divider></br-divider>
+                </br-item>
+              </br-list>
+            </div>
+            <div *ngIf="userForm.get('abrigos').invalid && userForm.get('abrigos').touched">
+              <div *ngIf="userForm.get('abrigos').errors.required">
+                <app-message [control]="userForm.get('abrigos')" error="required" message="O campo é obrigatório">
+                </app-message>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- password -->
+        <!-- <div class="mb-3">
+    <div class="row">
+      <div class="col">
+        <br-input
+          type="password"
+          id="password"
+          ispassword
+          name="password"
+          placeholder="Senha"
+          label="Senha:"
+          formControlName="password"
+          (input)="handleInput('password')"
+        >
+        </br-input>
+        <div *ngIf="userForm.get('password').invalid && userForm.get('password').touched">
+          <div *ngIf="userForm.get('password').errors.required">
+            <app-message [control]="userForm.get('password')" error="required" message="O campo é obrigatório">
+            </app-message>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+      </form>
+      <div class="mt-3 d-flex justify-content-md-end" slot="buttons">
+        <br-button
+          id="enviar"
+          label="Enviar Formulário"
+          type="primary"
+          class="mt-3 mr-1"
+          (click)="onSubmit()"
+          [attr.aria-labelledby]="'Enviar Formulário'"
+        >
+        </br-button>
+        <br-button
+          id="fechar"
+          label="Fechar Formulário"
+          type="primary"
+          class="mt-3 mr-1"
+          (click)="closeModal()"
+          [attr.aria-labelledby]="'Fechar'"
+        >
+        </br-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-between">
+    <div class="row">
+      <div class="col">
+        <h3>Lista de Usuários</h3>
+      </div>
+      <br-input label="Filtrar" placeholder="Por nome ou email" (input)="filterUsers($event)"></br-input>
+    </div>
+
+    <br-button
+      id="addUser"
+      label="Cadastrar Usuário"
+      type="primary"
+      class="mt-3 mr-1"
+      (click)="openModalAdd()"
+      icon="plus"
+      title="Cadastrar um novo usuário"
+    ></br-button>
+  </div>
+
+  <div style="flex: 1 1 0; overflow: auto; width: 100%; min-height: 500px">
+    <table class="br-table">
+      <thead>
+        <tr>
+          <th>Ações</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Celular</th>
+          <th>Perfil</th>
+          <th>Abrigo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filterUsersList; let i = index; trackBy: trackUsers">
+          <td style="width: 150px">
+            <br-button
+              class="small"
+              circle
+              type="primary"
+              icon="edit"
+              title="Editar usuário"
+              (click)="openEditModalData(user)"
+            ></br-button>
+            <br-button
+              class="small"
+              circle
+              type="primary"
+              icon="trash-alt"
+              title="Excluir usuário"
+              (click)="removeUser(user)"
+              appAuthorization
+              [level]="authorizationService.AUTHORIZATION_LEVEL_ADMINISTRADOR"
+            ></br-button>
+          </td>
+          <td class="cell-lg">{{ user.name }}</td>
+          <td class="cell-lg">{{ user.email }}</td>
+          <td class="cell-md">{{ user.mobile }}</td>
+          <td class="cell-md">{{ user.role | formatRole }}</td>
+          <td class="cell-lg">{{ user.abrigoNome || user["abrigosNomes"] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

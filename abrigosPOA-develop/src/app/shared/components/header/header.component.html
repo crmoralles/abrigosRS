@@ -1,0 +1,29 @@
+<br-header
+  [signature]="signature"
+  [title]="title"
+  [subtitle]="subtitle"
+  container-fluid="true"
+  has-menu="true"
+  has-title-link="true"
+  id="header"
+  title-link-url="/"
+  [image]="image.src"
+>
+  <div slot="headerMenu">
+    <br-button
+      role="option"
+      circle
+      density="small"
+      aria-label="Menu"
+      [icon]="sharedService.isOpen ? 'times' : 'bars'"
+      (click)="toggleMenu()"
+    ></br-button>
+  </div>
+
+  <div slot="headerAction">
+    <div>
+      <span style="margin-right: 10px">{{ userName }} [{{ userRole | formatRole }}]</span>
+      <br-button aria-label="Ações do usuário" icon="user" label="Sair" (click)="signOut()"></br-button>
+    </div>
+  </div>
+</br-header>

@@ -1,0 +1,236 @@
+<div class="content">
+  <div class="row align-items-top justify-content-between">
+    <h1>Dashboard</h1>
+    <div>
+      <br-button type="primary" class="mt-3 mr-1" (click)="addAbrigado()" label="Cadastrar Abrigado"> </br-button>
+      <br-button type="primary" class="mt-3 mr-1" (click)="exportAbrigos()" label="Exportar"> </br-button>
+    </div>
+  </div>
+
+  <div class="row align-items-end">
+    <div class="col">
+      <div class="input-search">
+        <div class="row align-items-center">
+          <div class="col">
+            <br-input
+              type="text"
+              placeholder="Procurar por nome, endereço ou bairro do abrigo..."
+              label="Busca:"
+              (input)="search($event)"
+            >
+            </br-input>
+          </div>
+          <div class="loading-search">
+            <i *ngIf="loadSearch | async" class="fas fa-spinner"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <br-select
+        label="Filtro por Cidade:"
+        placeholder="Cidade"
+        [options]="citieOptions"
+        (change)="changeSelectCityFilter($event)"
+      >
+      </br-select>
+    </div>
+    <div class="col">
+      <span>Quantidade: </span> <span>{{ listaFiltrada.length }}</span>
+    </div>
+  </div>
+
+  <div class="empty-message" *ngIf="busca && listaFiltrada.length === 0">
+    <p>Nenhum dado encontrado para a sua busca.</p>
+  </div>
+
+  <div class="overview">
+    <h3>Visão Geral {{ selectedCity?.city || "" }}</h3>
+
+    <app-card-totalizer
+      [superLotado]="selectedCity?.superLotado || 0"
+      [totalOcupacao]="selectedCity?.totalOcupacao || 0"
+      [totalOcupacaoColor]="selectedCity?.totalOcupacaoColor || 0"
+      [totalVagas]="selectedCity?.totalVagas || 0"
+      [totalLivre]="selectedCity?.totalLivre || 0"
+    ></app-card-totalizer>
+
+    <h4>Precisa-se de doação:</h4>
+    <span><b>Colchões: </b> {{ selectedCity?.totalColchoes }}</span>
+    <span><b>Marmitas: </b> {{ selectedCity?.totalMarmitas }}</span>
+  </div>
+
+  <div class="overview">
+    <div class="d-flex">
+      <h3 class="d-flex">
+        Visão por Cidade
+        <div class="d-flex align-items-center justify-content-center">
+          <button class="toggle-button ml-2 mt-1" style="padding: 2px; font-size: 10px" (click)="toggleSection()">
+            {{ showSection ? "Recolher" : "Mostrar" }} Seção.
+          </button>
+        </div>
+      </h3>
+    </div>
+
+    <div
+      *ngIf="showSection"
+      class="city-section"
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 50%);
+        grid-template-rows: repeat(auto-fill, 180px);
+        width: 100%;
+      "
+    >
+      <app-card-totalizer
+        *ngFor="let cityTotal of totalizadorPorCidade"
+        [label]="cityTotal.city || 'Sem cidade informada'"
+        [superLotado]="false"
+        [totalOcupacao]="cityTotal.totalOcupacao"
+        [totalOcupacaoColor]="cityTotal.totalOcupacaoColor"
+        [totalVagas]="cityTotal.totalVagas"
+        [totalLivre]="cityTotal.totalLivre"
+      ></app-card-totalizer>
+    </div>
+  </div>
+
+  <h3>Visão Geral dos Abrigos</h3>
+
+  <app-totalizadores-dashboard [listaFiltrada]="listaFiltrada"></app-totalizadores-dashboard>
+
+  <div class="shelter-grid">
+    <div class="shelter-card" style="position: relative; min-height: 430px" *ngFor="let abrigo of currentPageItems">
+      <div class="shelter-card--info">
+        <div class="occupancy-bar">
+          <span>Total de ocupação</span>
+          <div class="chart-container">
+            <div
+              class="chart-occupation"
+              [ngClass]="{ piscar: abrigo['vagas_super_lotado'] }"
+              [ngStyle]="{
+                'width.%': getOccupationPercentage(abrigo),
+                backgroundColor: abrigo['vagas_ocupacao_color'] || '#f0f0f0'
+              }"
+            ></div>
+            <div class="chart-label">{{ getOccupationPercentage(abrigo) }}%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="shelter-card--info">
+        <strong>Vagas:&nbsp;</strong>
+        <span>{{ abrigo.vagas || "0" }}</span>
+      </div>
+
+      <div class="shelter-card--info">
+        <strong>Vagas Ocupadas:</strong>
+        {{ abrigo.vagas_ocupadas || "0" }}
+      </div>
+      <div class="shelter-card--info">
+        <strong>Vagas disponíveis:</strong>
+        <span *ngIf="abrigo.vagas && abrigo.vagas_ocupadas">
+          {{ abrigo.vagas - abrigo.vagas_ocupadas }}
+        </span>
+        <span *ngElse>0</span>
+      </div>
+      <div class="shelter-card--info">
+        <strong>Abrigados registrados:</strong> {{ abrigo.abrigadosRegistrados || "0" }}
+      </div>
+
+      <hr />
+
+      <div class="shelter-card--info"><strong>Nome do Abrigo:</strong> {{ abrigo.nome }}</div>
+      <div class="shelter-card--info">
+        <strong>Endereço: </strong>
+        {{ abrigo.address || "" }}
+      </div>
+      <div class="shelter-card--info">
+        <strong>Telefone:</strong>
+        {{ abrigo.telefone || "" }}
+      </div>
+      <div class="shelter-card--info"><strong>Nome do Contato:</strong> {{ abrigo.nome_contato || "" }}</div>
+      <div class="shelter-card--info" *ngIf="abrigo.demanda">
+        <strong>Demanda:</strong>
+        {{ abrigo.demanda }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.roupa_cama">
+        <strong>Roupa de Cama:</strong> {{ abrigo.roupa_cama }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.banheiros">
+        <strong>Banheiros:</strong>
+        {{ abrigo.banheiros }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.colchoes">
+        <strong>Colchões:</strong>
+        {{ abrigo.colchoes }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.cozinha">
+        <strong>Tem Cozinha?</strong>
+        {{ abrigo.cozinha | simNao }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.insumos_refeicao">
+        <strong>Precisa de insumos para refeição?</strong> {{ abrigo.insumos_refeicao | simNao }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.marmita">
+        <strong>Precisa de Marmita?</strong>
+        {{ abrigo.marmita }}
+      </div>
+      <div class="shelter-card--info" *ngIf="abrigo.estrutura_pessoas">
+        <strong>Estrutura pessoal:</strong> {{ abrigo.estrutura_pessoas }}
+      </div>
+
+      <div class="shelter-card--footer">
+        <br-button
+          type="primary"
+          class="mb-1"
+          [style]="{ width: '100%' }"
+          (click)="addAbrigado(abrigo.id)"
+          [label]="'Cadastrar abrigado'"
+        >
+        </br-button>
+
+        <br-button
+          type="primary"
+          class="w-full"
+          [style]="{ width: '100%' }"
+          (click)="itensUteis(abrigo.id)"
+          [label]="'Itens de necessidade'"
+        >
+        </br-button>
+      </div>
+    </div>
+
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>Itens de Necessidade</h2>
+        <table *ngIf="abrigo">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of abrigo.itensUteis">
+              <td>{{ item.item }}</td>
+              <td>{{ item.quantidade }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    label="abrigos"
+    [hideItemsPerPage]="true"
+    [itemsPerPage]="itemsPerPage"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [totalItems]="totalItems"
+    (pageChange)="handlePageChange($event)"
+    (itemsPerPageChange)="handleItemsPerPageChange($event)"
+  >
+  </app-pagination>
+</div>

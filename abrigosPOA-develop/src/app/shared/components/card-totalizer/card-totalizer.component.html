@@ -1,0 +1,25 @@
+<div class="col overview mb-3">
+  <h4>{{ label }}</h4>
+  <div class="occupancy-bar">
+    <span>Total de ocupação</span>
+    <div class="chart-container">
+      <div
+        class="chart-occupation"
+        [ngClass]="{ piscar: superLotado }"
+        [ngStyle]="{
+          'width.%': totalOcupacao === 0 ? 100 : getTotalOcupacaoPercentage(totalOcupacao),
+          'background-color': totalOcupacaoColor || '#f0f0f0'
+        }"
+      ></div>
+      <div class="chart-label">{{ getTotalOcupacaoPercentage(totalOcupacao) }}%</div>
+    </div>
+  </div>
+  <div class="totals">
+    <div class="total-info">
+      <b>Total de vagas:</b> <span>{{ totalVagas }}</span>
+    </div>
+    <div class="total-info">
+      <b>Vagas livres:</b> <span>{{ totalLivre }}</span>
+    </div>
+  </div>
+</div>

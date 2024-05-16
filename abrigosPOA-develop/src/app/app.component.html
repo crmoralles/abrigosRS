@@ -1,0 +1,44 @@
+<app-loader></app-loader>
+
+<div
+  *ngIf="!production"
+  style="
+    position: absolute;
+    z-index: 2200;
+    width: 100%;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(1, 6, 32, 0.75);
+  "
+>
+  Sandbox (Apenas teste) - UID: {{ UID }}
+</div>
+
+<div class="template-base">
+  <ng-container *ngIf="!isLogged; else logged">
+    <app-login></app-login>
+  </ng-container>
+</div>
+
+<ng-template #logged>
+  <app-header style="z-index: 220"></app-header>
+  <main class="main d-flex flex-fill mb-5" id="main" style="display: flex">
+    <div class="container-fluid">
+      <app-lgpd-terms *ngIf="!isLGDPAccept; else main"></app-lgpd-terms>
+    </div>
+  </main>
+  <app-footer class="pt-3"></app-footer>
+</ng-template>
+
+<ng-template #main>
+  <div class="row">
+    <div class="col-2 ml-0 pl-0" *ngIf="sharedService.isOpen">
+      <app-menu class="col-xl-2 col-lg-3 col-md-4 col-sm-5"></app-menu>
+    </div>
+    <div [ngClass]="{ col: !sharedService.isOpen, 'col-10': sharedService.isOpen }">
+      <app-breadcrumb></app-breadcrumb>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-template>

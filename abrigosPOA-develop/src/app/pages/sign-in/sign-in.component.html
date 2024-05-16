@@ -1,0 +1,37 @@
+<p>
+  Usuário <b>{{ isLogged ? "autenticado" : "não autenticado" }}</b>
+</p>
+
+<br-message state="info" show-icon="true">
+  Clique no componentes abaixo para simular um evento de <strong>login/logout</strong> e observe o console do browser
+  para mais informações.
+</br-message>
+
+<div class="dropdown">
+  <br-sign-in *ngIf="!isLogged" type="primary" label="Entrar com" entity="gov.br" (click)="toggleSignIn()"></br-sign-in>
+
+  <ng-container *ngIf="isLogged">
+    <button
+      class="br-sign-in"
+      type="button"
+      id="avatar-dropdown-trigger"
+      aria-label="Abrir menu do usuário"
+      (click)="this.userMenuVisible = !this.userMenuVisible"
+      data-toggle="dropdown"
+      data-target="user-menu"
+      aria-controls="user-menu"
+      [attr.data-visible]="isLogged"
+      [attr.aria-expanded]="isLogged"
+    >
+      <br-avatar name="Usuário Logado" image="https://picsum.photos/id/823/400"> </br-avatar>
+      <i class="fas fa-caret-up" aria-hidden="true" *ngIf="userMenuVisible"></i>
+      <i class="fas fa-caret-down" aria-hidden="true" *ngIf="!userMenuVisible"></i>
+    </button>
+  </ng-container>
+  <br-list id="user-menu" *ngIf="userMenuVisible">
+    <br-item hover (click)="toggleFunctionality($event)">Funcionalidade 01</br-item>
+    <br-item hover (click)="toggleFunctionality($event)">Funcionalidade 02</br-item>
+    <br-item hover (click)="toggleFunctionality($event)">Funcionalidade 03</br-item>
+    <br-item hover (click)="toggleSignIn()">Fazer logout</br-item>
+  </br-list>
+</div>

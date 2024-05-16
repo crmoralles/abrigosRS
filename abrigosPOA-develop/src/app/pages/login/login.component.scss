@@ -1,0 +1,38 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .row {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+
+  &--img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  &--form {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+/* Estilos para telas pequenas */
+@media screen and (max-width: 600px) {
+  .button-box-form br-button {
+    width: 100%;
+  }
+}

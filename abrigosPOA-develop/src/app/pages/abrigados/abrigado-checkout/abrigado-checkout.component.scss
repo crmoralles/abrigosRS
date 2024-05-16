@@ -1,0 +1,23 @@
+.context {
+  background-color: white;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.body {
+  flex: 1 1 0;
+  padding: 20px;
+}
+
+span {
+  margin: 10px;
+}
+
+.actionsBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin: 20px;
+}
